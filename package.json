@@ -9,7 +9,9 @@
   },
   "dependencies": {
     "core-js": "^3.6.4",
-    "vue": "^2.6.11"
+    "g": "^2.0.1",
+    "vue": "^2.6.11",
+    "vue-naver-maps": "^0.12.1"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.3.0",

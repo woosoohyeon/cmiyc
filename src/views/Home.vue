@@ -1,36 +1,34 @@
 <template>
   <div class="home">
-  <v-container>
-    <v-row class="title">
-      <v-col></v-col>
-      <v-col cols="5"><h1>Catch Mask If You Can</h1></v-col>
-      <v-col></v-col>
-    </v-row>
-    <v-row class="search">
-      <v-col cols="3"></v-col>
-      <v-col cols="6">
-        <v-textarea
-        label="주소를 입력해주세요!"
-        outlined
-        rows="1"
-        row-height="1"
-      ></v-textarea>
-      </v-col>
-      <v-col cols="3">
+  <b-container>
+    <!-- 제목 시작 -->
+    <b-row align-h="center" class="title">
+      <h1>Catch Mask If You Can</h1>
+    </b-row>
+    <!-- 제목 끝 -->
+    <b-row align-h="center" class="mt-5">
+      <!-- 주소 입력창 시작 -->
+      <b-col cols="2"></b-col>
+      <b-col cols="5">
+      <b-form-input size="lg" placeholder="주소를 입력해주세요!"></b-form-input>
+      <!-- 주소 입력창 끝 -->
+      </b-col>
+      <!-- 검색 버튼 시작 -->
+      <b-col cols="2">
         <router-link to="/map">
-          <v-btn text large color="primary">검색</v-btn>
+          <b-button variant="outline-primary" size="lg" align-v="center">검색</b-button>
         </router-link>
-      </v-col>
-    </v-row>
-    <v-row class="nav">
-      <v-col></v-col>
-      <v-col>
-        <v-btn text large color="primary" @click="nowLocate()">현재위치로 확인하기</v-btn>
-      </v-col>
-      <v-col></v-col>
-    </v-row>
+      </b-col>
+      <!-- 검색 버튼 끝 -->
+    </b-row>
+    <b-row align-h="center" class="mt-3">
+      <!-- 현재위치 받은 후 지도로 이동 -->
+      <router-link to="/map">
+      <b-button variant="info" @click="nowLocate()">현재위치로 확인하기</b-button>
+      </router-link>
+    </b-row>
     <router-view/>
-  </v-container>
+  </b-container>
   </div>
 </template>
 
@@ -61,10 +59,11 @@ export default {
 </script>
 <style scoped>
 .title{
-  margin-top: 4rem;
+  margin-top: 7rem;
 }
 .search{
-  margin-top: 3rem;
+  border: 1px solid rgba(0, 0, 0, .6);
+  border-radius: 7px;
 }
 a{
   color: black;

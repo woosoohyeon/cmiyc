@@ -7,9 +7,7 @@
         </router-link>
       </b-collapse>
       <b-navbar-nav align="right">
-          <b-button v-b-toggle.sidebar-1>
-            <b-icon-card-text></b-icon-card-text>
-          </b-button>
+        <b-button v-b-toggle.sidebar-1>Top3</b-button>
       </b-navbar-nav>
     </b-navbar>
     
@@ -25,13 +23,26 @@
       :mapOptions="mapOptions"
       :initLayers="initLayers">
       <naver-marker v-for="(item, idx) in mask" :key="idx" :lat="item.lat" :lng="item.lng" @click="onMarkerClicked(idx)"></naver-marker>
+      <!-- 위치제공 동의를 하지 않으면 현재위치를 마커로 표시하지 않습니다. -->
+      <naver-marker v-if="nowLocate.lat!==0" :lat="nowLocate.lat" :lng="nowLocate.lng"></naver-marker>
       <naver-info-window
         @load="onInfoLoad"
         :isOpen="info"
         :marker="marker">
         <div>
-          <h5>{{infoWindow.name}}</h5>
-          <p>asdfa</p>
+          <b-card
+            img-src="https://picsum.photos/600/300/?image=25"
+            img-alt="Image"
+            img-top
+            style="max-width: 20rem;"
+            class="mb-2"
+          >
+            <h5 style="font-weight: bold;">{{infoWindow.name}}</h5>
+            <b-card-text>
+              Some quick example text to build on the card title and make up the bulk of the card's content.
+            </b-card-text>
+            <b-button href="#" variant="primary">Go somewhere</b-button>
+          </b-card>
         </div>
       </naver-info-window>
     </naver-maps>
@@ -43,6 +54,16 @@ import maskData from '../assets/maskDATA.json'
 
 export default {
   name: 'Map',
+  created(){
+    // Map화면으로 들어오면 항상 새롭게 현재 위치를 물어봅니다
+    navigator.geolocation.getCurrentPosition(
+      (pos)=>{
+          this.mapOptions.lat = pos.coords.latitude,
+          this.mapOptions.lng = pos.coords.longitude
+      },
+      (err)=>console.err(err)
+    )
+  },
   data(){
     return{
       width: screen.availWidth,
@@ -53,17 +74,17 @@ export default {
       },
       marker: null,
       mapOptions: {
-        lat: JSON.parse(localStorage.getItem('nowlocate')).lat,
-        lng: JSON.parse(localStorage.getItem('nowlocate')).lng,
+        lat: 37.224944,
+        lng: 127.183181,
         zoom: 14,
         minZoom: 14,
         zoomControlOptions: {position: 'TOP_RIGHT'},
       },
         initLayers: ['BACKGROUND', 'BACKGROUND_DETAIL', 'POI_KOREAN']
       ,
-      nowPosition:{
-        lat: 37,
-        lng: 127  
+      nowLocate :{
+        lat: 0,
+        lng: 0
       },
       mask:[],
       }

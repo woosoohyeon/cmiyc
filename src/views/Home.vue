@@ -5,8 +5,14 @@
     <b-row align-h="center" class="title">
       <h1>Catch Mask If You Can</h1>
     </b-row>
+    <b-row align-h="center">
+      <Purchasable/>
+    </b-row>
     <!-- 제목 끝 -->
-    <b-row align-h="center" class="mt-5">
+    <b-row align-h="center" class="mt-4 mb-3">
+      <GetTime/>
+    </b-row>
+    <b-row align-h="center">
       <!-- 주소 입력창 시작 -->
       <b-col cols="2"></b-col>
       <b-col cols="5">
@@ -34,6 +40,9 @@
 
 <script>
 // @ is an alias to /src
+import Purchasable from '../components/PurchasableDay'
+import GetTime from '../components/GetTime'
+
 export default {
   name: 'Home',
   methods: {
@@ -54,6 +63,7 @@ export default {
     }
   },
   components: {
+    Purchasable, GetTime
   }
 }
 </script>

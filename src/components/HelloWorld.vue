@@ -1,3 +1,7 @@
+<!--
+vue-naver-maps 라이브러리를 가져오기 위한 부분
+2020년 5월 1일 김민지 주석만 작성
+-->
 <template>
   <div>
     <naver-maps

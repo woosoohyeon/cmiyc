@@ -3,7 +3,7 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 
 Vue.use(VueRouter)
-
+//컴포넌트 렌더링 20200501 김민지 주석만작성
   const routes = [
   {
     path: '/',

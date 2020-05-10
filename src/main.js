@@ -15,7 +15,7 @@ Vue.use(naver, {
 // vue-router
 import VueRouter from 'vue-router'
 Vue.use(VueRouter)
-
+  
 //bootstrap-vue
 import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'

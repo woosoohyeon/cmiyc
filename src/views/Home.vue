@@ -9,39 +9,36 @@
       <Purchasable/>
     </b-row>
     <!-- 제목 끝 -->
-    <b-row align-h="center" class="mt-4 mb-3">
+    <b-row align-h="center" class="mt-4">
       <GetTime/>
     </b-row>
-    <b-row align-h="center">
-      <!-- 주소 입력창 시작 -->
-      <b-col cols="2"></b-col>
-      <b-col cols="5">
-      <b-form-input size="lg" placeholder="주소를 입력해주세요!"></b-form-input>
-      <!-- 주소 입력창 끝 -->
-      </b-col>
-      <!-- 검색 버튼 시작 -->
-      <b-col cols="2">
-        <router-link to="/map">
-          <b-button variant="outline-primary" size="lg" align-v="center">검색</b-button>
-        </router-link>
-      </b-col>
-      <!-- 검색 버튼 끝 -->
-    </b-row>
-    <b-row align-h="center" class="mt-3">
+    <b-row align-h="center" class="mt-3 mb-4">
       <!-- 현재위치 받은 후 지도로 이동 -->
       <router-link to="/map">
       <b-button variant="info" @click="nowLocate()">현재위치로 확인하기</b-button>
       </router-link>
     </b-row>
     <router-view/>
+      <!-- 주소 검색 -->
+      <Search/>
+      <!-- 주소 검색 끝 -->
+
   </b-container>
+  <b-modal id="notice" title="공지사항" hide-footer>
+    <p>1. 우수현우수현우수현우수현우수현우수현우수현우수현우수현입니다</p>
+    <p>2. 우수현우수현우수현우수현우수현우수현우수현우수현우수현입니다</p>
+    <p>3. 우수현우수현우수현우수현우수현우수현우수현우수현우수현입니다</p>
+    <p>4. 우수현우수현우수현우수현우수현우수현우수현우수현우수현입니다</p>
+    <b-button class="mt-3" block @click="$bvModal.hide('notice')">확인</b-button>
+  </b-modal>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import Purchasable from '../components/PurchasableDay'
-import GetTime from '../components/GetTime'
+import Purchasable from '@/components/PurchasableDay'
+import GetTime from '@/components/GetTime'
+import Search from '@/components/Search'
 
 export default {
   name: 'Home',
@@ -63,13 +60,16 @@ export default {
     }
   },
   components: {
-    Purchasable, GetTime
+    Purchasable, GetTime, Search
+  },
+  mounted() {
+    this.$bvModal.show('notice')
   }
 }
 </script>
 <style scoped>
 .title{
-  margin-top: 7rem;
+  margin-top: 1rem;
 }
 .search{
   border: 1px solid rgba(0, 0, 0, .6);

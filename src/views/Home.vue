@@ -49,7 +49,8 @@ export default {
       if(!locate){
         navigator.geolocation.getCurrentPosition(
           pos=>{
-            EventBus.$emit('NOW_LOCATE', [pos.coords.latitude, pos.coords.longitude])}
+            EventBus.$emit('NOW_LOCATE', [pos.coords.latitude, pos.coords.longitude])
+            this.$router.push('map')}
           ,(err)=>console.log(err)
         )
       }

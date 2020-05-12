@@ -49,7 +49,6 @@ export default {
       if(!locate){
         navigator.geolocation.getCurrentPosition(
           pos=>{
-            console.log(pos.coords.latitude)
             EventBus.$emit('NOW_LOCATE', [pos.coords.latitude, pos.coords.longitude])}
           ,(err)=>console.log(err)
         )

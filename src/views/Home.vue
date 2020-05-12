@@ -39,6 +39,7 @@
 import Purchasable from '@/components/PurchasableDay'
 import GetTime from '@/components/GetTime'
 import Search from '@/components/Search'
+import EventBus from '@/eventbus'
 
 export default {
   name: 'Home',
@@ -47,14 +48,10 @@ export default {
       let locate = localStorage.getItem('nowlocate');
       if(!locate){
         navigator.geolocation.getCurrentPosition(
-          (pos)=>{
-            let nowlocate = {
-              lat : pos.coords.latitude,
-              lng : pos.coords.longitude
-            }
-            localStorage.setItem('nowlocate', JSON.stringify(nowlocate))
-          },
-          (err)=>console.err(err)
+          pos=>{
+            console.log(pos.coords.latitude)
+            EventBus.$emit('NOW_LOCATE', [pos.coords.latitude, pos.coords.longitude])}
+          ,(err)=>console.log(err)
         )
       }
     }

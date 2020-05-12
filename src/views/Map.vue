@@ -13,7 +13,7 @@
     
     <b-sidebar id="sidebar-1" title="Sidebar" shadow>
       <div class="px-3 py-2">
-        {{test}}
+        asdf
         <b-img src="https://picsum.photos/500/500/?image=54" fluid thumbnail></b-img>
       </div>
     </b-sidebar>
@@ -21,12 +21,12 @@
       :height="height"
       :width="width"
       :mapOptions="mapOptions"
-      :initLayers="initLayers">
+      :initLayers="initLayers"
+      @load="onLoad">
       <naver-marker v-for="(item, idx) in mask" :key="idx" :lat="item.lat" :lng="item.lng" @click="onMarkerClicked(idx)"></naver-marker>
       <!-- 위치제공 동의를 하지 않으면 현재위치를 마커로 표시하지 않습니다. -->
-      <naver-marker v-if="nowLocate.lat!==0" :lat="nowLocate.lat" :lng="nowLocate.lng"></naver-marker>
+      <naver-marker :lat="nowLocate.lat" :lng="nowLocate.lng"></naver-marker>
       <naver-info-window
-        @load="onInfoLoad"
         :isOpen="info"
         :marker="marker">
         <div>
@@ -51,24 +51,23 @@
 
 <script>
 import maskData from '../assets/maskDATA.json'
+import EventBus from '@/eventbus'
 
 export default {
   name: 'Map',
   created(){
-    // Map화면으로 들어오면 항상 새롭게 현재 위치를 물어봅니다
-    navigator.geolocation.getCurrentPosition(
-      (pos)=>{
-          this.mapOptions.lat = pos.coords.latitude,
-          this.mapOptions.lng = pos.coords.longitude
-      },
-      (err)=>console.err(err)
-    )
+    EventBus.$on('NOW_LOCATE', pos=>{
+      this.map.setCenter(pos[0], pos[1])
+      this.nowLocate.lat = pos[0];
+      this.nowLocate.lng = pos[1];
+    });
   },
   data(){
     return{
       width: screen.availWidth,
       height: screen.availHeight,
       info: false,
+      map: null,
       infoWindow:{
         name: null,
       },
@@ -90,6 +89,9 @@ export default {
       }
     },
   methods: {
+    onLoad(vue){
+      this.map = vue;
+    },
     onMarkerClicked(idx) {
       this.marker = this.mask[idx]; // 현재 마커 할당
       this.info = !this.info; // 인포 윈도우 표시
@@ -97,9 +99,11 @@ export default {
     },
   },
   mounted(){
+    // 마스크 데이터 가공
     maskData.storeInfos.forEach(element => {
       this.mask.push(element)
     });
+
   }
 }
 </script>

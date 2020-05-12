@@ -45,15 +45,12 @@ export default {
   name: 'Home',
   methods: {
     nowLocate(){
-      let locate = localStorage.getItem('nowlocate');
-      if(!locate){
-        navigator.geolocation.getCurrentPosition(
-          pos=>{
-            EventBus.$emit('NOW_LOCATE', [pos.coords.latitude, pos.coords.longitude])
-            this.$router.push('map')}
-          ,(err)=>console.log(err)
-        )
-      }
+      navigator.geolocation.getCurrentPosition(
+        pos=>{
+          EventBus.$emit('NOW_LOCATE', [pos.coords.latitude, pos.coords.longitude])
+          this.$router.push('map')}
+        ,(err)=>console.log(err)
+      )
     }
   },
   components: {

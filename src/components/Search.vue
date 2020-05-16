@@ -5,7 +5,7 @@
         <b-row align-h="center">
           <b-col cols="3"></b-col>
           <b-col cols="5">
-            <b-form-input v-model="input" placeholder="Enter your name" @keyup.enter="search"></b-form-input>
+            <b-form-input v-model="input" placeholder="Enter your name" @keyup="search"></b-form-input>
           </b-col>
           <b-col cols="3">
             <b-button variant="outline-primary" size="lg" align-v="center" v-on:click="search">검색</b-button>
@@ -15,9 +15,13 @@
         <b-row align-h="center">
           <b-list-group class="result">
             <b-list-group-item button v-for="item in result" v-bind:key="item" style="width : 450px">
-                {{item[0]}}<br>
-                <span class="address">{{item[1]}}<br>
-                {{item[2]}}</span>
+                <b-container v-on:click="newLocate(item[3],item[4])">
+                  {{item[0]}}<br>
+                  <span class="address">{{item[1]}}<br>
+                  {{item[2]}}</span>
+
+                </b-container>
+                
             </b-list-group-item>
           </b-list-group>
         </b-row>
@@ -44,11 +48,14 @@ export default {
          }
        })
         .then(res=>
-            this.result = res.data.documents.map(x=>[x.place_name, x.address_name, x.road_address_name, x.x, x.y])
+            this.result = res.data.documents.map(x=>
+            [x.place_name, x.address_name, x.road_address_name, x.x, x.y])
           )
         .catch(error=>console.log(error))
     },
-
+    newLocate(x,y){
+      this.$router.push({ path: 'map', query: { x: x, y: y }})
+    }
   }
 }
 </script>

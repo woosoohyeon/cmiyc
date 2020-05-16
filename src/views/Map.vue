@@ -91,6 +91,11 @@ export default {
   methods: {
     onLoad(vue){
       this.map = vue;
+      this.nowLocate.lat = Number(this.$route.query.y)
+      this.nowLocate.lng = Number(this.$route.query.x)
+      this.map.setCenter(Number(this.$route.query.y), Number(this.$route.query.x))
+      console.log(this.nowLocate.lat)
+      
     },
     onMarkerClicked(idx) {
       this.marker = this.mask[idx]; // 현재 마커 할당

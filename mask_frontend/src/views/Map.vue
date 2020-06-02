@@ -50,8 +50,12 @@
 </template>
 
 <script>
+import Vue from 'vue'
 import maskData from '../assets/maskDATA.json'
 import EventBus from '@/eventbus'
+import axios from 'axios'
+
+Vue.prototype.$http = axios
 
 export default {
   name: 'Map',
@@ -97,10 +101,23 @@ export default {
       console.log(this.nowLocate.lat)
       
     },
+    loadPharm(lat, lng) {
+      this.$http.post("/api/loadPharm", {
+        lat: lat,
+        lng: lng
+      })
+      .then(response => {
+        if (response.status === 200) {
+            console.log(response.data);
+            }
+        });
+    },
     onMarkerClicked(idx) {
       this.marker = this.mask[idx]; // 현재 마커 할당
       this.info = !this.info; // 인포 윈도우 표시
       this.infoWindow.name = this.mask[idx].name;
+      console.log(this.mask[idx]);
+      this.loadPharm(this.mask[idx].lat, this.mask[idx].lng);
     },
   },
   mounted(){
@@ -109,7 +126,8 @@ export default {
       this.mask.push(element)
     });
 
-  }
+  },
+  
 }
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->

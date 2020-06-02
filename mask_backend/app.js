@@ -22,16 +22,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/api/', indexRouter);
 
-var mysql = require('mysql');
-var connection = mysql.createConnection({
-  host : "donghyeon.synology.me",
-  port: 3307,
-  user : "maskteam",
-  password : "aktmzmxla1Q!",
-  database : "mask"
-})
-connection.connect()
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

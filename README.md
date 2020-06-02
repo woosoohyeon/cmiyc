@@ -1,2 +1,0 @@
-# cmiyc
-CatchMaskIfYouCan

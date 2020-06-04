@@ -35,13 +35,23 @@
             img-alt="Image"
             img-top
             style="max-width: 20rem;"
-            class="mb-2"
-          >
+            class="mb-2">
             <h5 style="font-weight: bold;">{{infoWindow.name}}</h5>
-            <b-card-text>
-              Some quick example text to build on the card title and make up the bulk of the card's content.
-            </b-card-text>
-            <b-button href="#" variant="primary">Go somewhere</b-button>
+            <samll>{{infoWindow.address}}</samll>
+            <b-card-text style="font-weight: bold;">{{infoWindow.phone}}</b-card-text>
+            <b-container class="bv-example-row">
+              <b-row>
+                <b-col>
+                  <small>예상 입고 시간</small>
+                  <small style="font-weight: bold;" >{{infoWindow.ware}}</small>
+                </b-col>
+                <b-col>
+                  <small>예상 매진 시간</small>
+                  <small style="font-weight: bold;" >{{infoWindow.soldout}}</small>
+                  
+                </b-col>
+              </b-row>
+            </b-container>
           </b-card>
         </div>
       </naver-info-window>
@@ -74,6 +84,10 @@ export default {
       map: null,
       infoWindow:{
         name: null,
+        address : null,
+        phone : null,
+        ware : null,
+        soldout: null
       },
       marker: null,
       mapOptions: {
@@ -108,8 +122,36 @@ export default {
       })
       .then(response => {
         if (response.status === 200) {
-            console.log(response.data);
+            this.data = response.data;
+            if(this.data[0]!= null){
+              this.infoWindow.address = this.data[0].address;
+              this.infoWindow.phone = this.data[0].phone;
+              this.getWareById(this.data[0].id);
             }
+              
+          }
+        });
+    },
+    getWareById(id) {
+      this.$http.post("/api/getWareById/", {
+        id : id
+      })
+      .then(response => {
+        if (response.status === 200) {
+            this.data = response.data;
+            this.infoWindow.ware = this.data[0].monday;
+          }
+        });
+    },
+    getSoldoutById(id) {
+      this.$http.post("/api/getSoldoutById/", {
+        id : id
+      })
+      .then(response => {
+        if (response.status === 200) {
+            this.data = response.data;
+            this.infoWindow.soldout = this.data[0].monday;
+          }
         });
     },
     onMarkerClicked(idx) {

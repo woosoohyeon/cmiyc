@@ -23,9 +23,9 @@
       :mapOptions="mapOptions"
       :initLayers="initLayers"
       @load="onLoad">
-      <naver-marker v-for="(item, idx) in mask" :key="idx" :lat="item.lat" :lng="item.lng" @click="onMarkerClicked(idx)"></naver-marker>
+      <naver-marker v-for="(item, idx) in mask" :key="idx" :lat="item.lat" :lng="item.lng" @click="onMarkerClicked(idx)" @load="onMarkerLoaded"></naver-marker>
       <!-- 위치제공 동의를 하지 않으면 현재위치를 마커로 표시하지 않습니다. -->
-      <naver-marker :lat="nowLocate.lat" :lng="nowLocate.lng"></naver-marker>
+      <naver-marker :lat="nowLocate.lat" :lng="nowLocate.lng" @load="onNowMarkerLoaded"></naver-marker>
       <naver-info-window
         :isOpen="info"
         :marker="marker">
@@ -60,12 +60,9 @@
 </template>
 
 <script>
-import Vue from 'vue'
 import maskData from '../assets/maskDATA.json'
 import EventBus from '@/eventbus'
-import axios from 'axios'
 
-Vue.prototype.$http = axios
 
 export default {
   name: 'Map',
@@ -153,6 +150,12 @@ export default {
             this.infoWindow.soldout = this.data[0].monday;
           }
         });
+    },
+    onNowMarkerLoaded(vue){
+      vue.marker.setIcon("https://ifh.cc/g/jC6jUb.png");
+    },
+    onMarkerLoaded(vue){
+      vue.marker.setIcon("https://ifh.cc/g/EmMCH7.png");
     },
     onMarkerClicked(idx) {
       this.marker = this.mask[idx]; // 현재 마커 할당

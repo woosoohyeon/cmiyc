@@ -28,24 +28,35 @@
       <naver-marker :lat="nowLocate.lat" :lng="nowLocate.lng" @load="onNowMarkerLoaded"></naver-marker>
     </naver-maps>
     <!-- 모달 인포윈도우 -->
-    <b-modal id="marker_info" size="sm" centered hide-footer hide-header>
-      <b-container fluid>
-        <h4 class="text-center">{{infoWindow.name}}</h4>
-        <small>{{infoWindow.address}}</small>
-        <b-card-text style="font-weight: bold;">{{infoWindow.phone}}</b-card-text>
-        <b-row>
-          
-          <b-col>
-            <small>예상 입고 시간</small>
-            <small style="font-weight: bold;" >{{infoWindow.ware}}</small>
-          </b-col>
-          <b-col>
-            <small>예상 매진 시간</small>
-            <small style="font-weight: bold;" >{{infoWindow.soldout}}</small>
-          </b-col>
-        </b-row>
-      </b-container>
-    </b-modal>
+    <naver-info-window
+        :isOpen="info"
+        :marker="marker">
+        <div>
+          <b-card
+            img-src="https://picsum.photos/600/300/?image=25"
+            img-alt="Image"
+            img-top
+            style="max-width: 20rem;"
+            class="mb-2">
+            <h5 style="font-weight: bold;">{{infoWindow.name}}</h5>
+            <samll>{{infoWindow.address}}</samll>
+            <b-card-text style="font-weight: bold;">{{infoWindow.phone}}</b-card-text>
+            <b-container class="bv-example-row">
+              <b-row>
+                <b-col>
+                  <small>예상 입고 시간</small>
+                  <small style="font-weight: bold;" >{{infoWindow.ware}}</small>
+                </b-col>
+                <b-col>
+                  <small>예상 매진 시간</small>
+                  <small style="font-weight: bold;" >{{infoWindow.soldout}}</small>
+                  
+                </b-col>
+              </b-row>
+            </b-container>
+          </b-card>
+        </div>
+      </naver-info-window>
   </div>
 </template>
 
@@ -150,12 +161,12 @@ export default {
       vue.marker.setIcon("https://ifh.cc/g/EmMCH7.png");
     },
     onMarkerClicked(idx) {
-          this.marker = this.data[idx]; // 현재 마커 할당
-          this.info = !this.info; // 인포 윈도우 표시
-          this.infoWindow.name = this.mask[idx].name;
-          console.log(this.data[idx]);
-          
-          this.loadPharm(this.mask[idx].lat, this.mask[idx].lng);
+      //alert(this.mask[idx].name);
+      //console.log();
+      this.marker = this.mask[idx]; // 현재 마커 할당
+      this.info = !this.info; // 인포 윈도우 표시
+      this.infoWindow.name = this.mask[idx].name;
+      this.loadPharm(this.mask[idx].lat, this.mask[idx].lng);
     },
     getPharmByGPS(lat,lng){
       console.log(lat);
@@ -176,13 +187,9 @@ export default {
     }
   },
   mounted(){
-    //console.log("mounted")
-    
-    // 마스크 데이터 가공
-    ///Maskdata.storeInfos.forEach(element => {
-    //  this.mask.push(element)
-    //});
-
+    /*Maskdata.storeInfos.forEach(element => {
+      this.mask.push(element)
+    });*/
   },
   
 }

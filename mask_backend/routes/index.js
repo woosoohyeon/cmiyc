@@ -117,11 +117,11 @@ router.post('/api/getPharmByGPS/', function(req, res, next) {
     if (err) throw err;
     //console.log(lat);
     //console.log(lng);
-    console.log(Number(lng-1));
+    //console.log(Number(lng-1));
     connection.query("SELECT * FROM pharm WHERE (lng BETWEEN ? AND ?) AND (lat BETWEEN ? AND ?) ",[Number(lng-0.04), Number(lng+0.04),Number(lat-0.05), Number(lat+0.05) ], function (err, result, fields){
       res.send(result);
       if (err) throw err;
-      console.log(result);
+      //console.log(result);
     });
   });
 });

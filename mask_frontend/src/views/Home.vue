@@ -27,7 +27,6 @@
 import Purchasable from '@/components/PurchasableDay'
 import GetTime from '@/components/GetTime'
 import Search from '@/components/Search'
-import EventBus from '@/eventbus'
 
 export default {
   name: 'Home',
@@ -35,10 +34,8 @@ export default {
     nowLocate(){
       navigator.geolocation.getCurrentPosition(
         pos=>{
-          EventBus.$emit('NOW_LOCATE', [pos.coords.latitude, pos.coords.longitude])
-          this.$router.push('map')}
-        ,(err)=>console.log(err)
-      )
+          this.$router.push({ path: 'map', query: {x: pos.coords.longitude, y: pos.coords.latitude }})
+        });
     }
   },
   components: {

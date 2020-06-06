@@ -39,7 +39,7 @@
             style="max-width: 20rem;"
             class="mb-2">
             <h5 style="font-weight: bold;">{{infoWindow.name}}</h5>
-            <samll>{{infoWindow.address}}</samll>
+            <small>{{infoWindow.address}}</small>
             <b-card-text style="font-weight: bold;">{{infoWindow.phone}}</b-card-text>
             <b-container class="bv-example-row">
               <b-row>

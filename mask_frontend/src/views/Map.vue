@@ -42,11 +42,11 @@
             <b-container class="bv-example-row">
               <b-row>
                 <b-col>
-                  <small>예상 입고 시간</small>
+                  <small>예상 입고 시간</small><br/>
                   <small style="font-weight: bold;" >{{infoWindow.ware}}</small>
                 </b-col>
                 <b-col>
-                  <small>예상 매진 시간</small>
+                  <small>예상 매진 시간</small><br/>
                   <small style="font-weight: bold;" >{{infoWindow.soldout}}</small>
                   
                 </b-col>
@@ -61,7 +61,7 @@
 
 <script>
 import Vue from 'vue'
-import maskData from '../assets/maskDATA.json'
+//import maskData from '../assets/maskDATA.json'
 import EventBus from '@/eventbus'
 import axios from 'axios'
 
@@ -74,7 +74,9 @@ export default {
       this.map.setCenter(pos[0], pos[1])
       this.nowLocate.lat = pos[0];
       this.nowLocate.lng = pos[1];
+      console.log("lng"+this.nowLocate.lat)
     });
+    
   },
   data(){
     return{
@@ -111,8 +113,8 @@ export default {
       this.map = vue;
       this.nowLocate.lat = Number(this.$route.query.y)
       this.nowLocate.lng = Number(this.$route.query.x)
-      this.map.setCenter(Number(this.$route.query.y), Number(this.$route.query.x))
-      console.log(this.nowLocate.lat)
+      this.map.setCenter(Number(this.$route.query.y), Number(this.$route.query.x));
+      this.getPharmByGPS(Number(this.$route.query.y), Number(this.$route.query.x));
       
     },
     loadPharm(lat, lng) {
@@ -155,18 +157,38 @@ export default {
         });
     },
     onMarkerClicked(idx) {
-      this.marker = this.mask[idx]; // 현재 마커 할당
-      this.info = !this.info; // 인포 윈도우 표시
-      this.infoWindow.name = this.mask[idx].name;
-      console.log(this.mask[idx]);
-      this.loadPharm(this.mask[idx].lat, this.mask[idx].lng);
+          this.marker = this.data[idx]; // 현재 마커 할당
+          this.info = !this.info; // 인포 윈도우 표시
+          this.infoWindow.name = this.mask[idx].name;
+          console.log(this.data[idx]);
+          
+          this.loadPharm(this.mask[idx].lat, this.mask[idx].lng);
     },
+    getPharmByGPS(lat,lng){
+      console.log(lat);
+      this.$http.post("/api/getPharmByGPS/", {
+        lat: lat,
+        lng: lng
+      })
+      .then(response => {
+        if (response.status === 200) {
+          this.Maskdata = response.data;
+          console.log(this.Maskdata);
+          this.Maskdata.forEach(element => {
+            this.mask.push(element)
+          });
+          
+        }
+      });
+    }
   },
   mounted(){
+    //console.log("mounted")
+    
     // 마스크 데이터 가공
-    maskData.storeInfos.forEach(element => {
-      this.mask.push(element)
-    });
+    ///Maskdata.storeInfos.forEach(element => {
+    //  this.mask.push(element)
+    //});
 
   },
   

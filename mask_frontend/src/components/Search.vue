@@ -4,11 +4,11 @@
       <b-container fluid>
         <b-row align-h="center">
           <b-col cols="3"></b-col>
-          <b-col cols="5">
+          <b-col cols="5" id = "SearchWrap">
             <b-form-input v-model="input" placeholder="Enter your name" @keyup="search"></b-form-input>
-          </b-col>
-          <b-col cols="3">
-            <b-button variant="outline-primary" size="lg" align-v="center" v-on:click="search">검색</b-button>
+			<b-button variant="outline-primary" size="" align-v="center" v-on:click="search" id="searchBtn">
+				<img src="../../public/serch.png" alt="My Image">
+			</b-button>
           </b-col>
           <b-col cols="3"></b-col>
         </b-row>
@@ -61,11 +61,46 @@ export default {
 </script>
 <style scoped>
 .result{
-    height: 250px;
+    height: 450px;
     overflow: auto;
 }
 .address{
     font-size: .8rem;
     color: gray;
 }
+input{
+	border : none;
+	float: left;
+	width : 85%;
+	margin-right : 10px;
+}
+#searchBtn{
+	border : none;
+	float: right;
+	width : 10%;
+	height : calc(1.5em + 0.75rem + 0px);
+    padding : 0;
+}
+#searchBtn:hover{
+	background-color:#fff;
+	opacity: 1.0;
+    border : none;
+}
+#SearchWrap{
+    padding-top : 5px;
+    padding-left : 20px;
+    position: relative;
+	height : calc(1.5em + 0.75rem + 15px);
+	border: solid 1px #006ecb;
+	background-color: #ffffff;
+	border-radius: 40px;
+    overflow:visible; 
+}
+#searchBtn > img{
+    display : block;
+    width : 20px; 
+    margin: 0 auto;
+
+}
+
 </style>

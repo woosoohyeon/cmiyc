@@ -57,9 +57,20 @@
         }
     }
   }
+        let style = document.createElement('link');
+        style.type = "text/css";
+        style.rel = "stylesheet";
+        style.href = "https://fonts.googleapis.com/css2?family=Nanum+Brush+Script&display=swap";
+        document.head.appendChild(style);
+
 </script>
 <style scoped>
 .highlight{
-    color: tomato;
+    color: #374baa;
+}
+
+h5{
+	font-family: 'Nanum Brush Script', cursive;
+	font-size : 30px;
 }
 </style>

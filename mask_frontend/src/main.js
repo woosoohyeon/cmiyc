@@ -25,10 +25,6 @@ import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 Vue.use(BootstrapVue, BootstrapVueIcons)
 
-//material-vue
-import VueMaterial from 'vue-material'
-import 'vue-material/dist/vue-material.min.css'
-Vue.use(VueMaterial)
 
 //vue-router. router객체를 넘겨준다. (2020년 5월 1일 김민지 주석만 작성)
 new Vue({

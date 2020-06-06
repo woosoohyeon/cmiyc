@@ -23,8 +23,9 @@
       :mapOptions="mapOptions"
       :initLayers="initLayers"
       @load="onLoad">
-      <naver-marker v-for="(item, idx) in mask" :key="idx" :lat="item.lat" :lng="item.lng" @click="onMarkerClicked(idx)"></naver-marker>
+      <naver-marker v-for="(item, idx) in mask" :key="idx" :lat="item.lat" :lng="item.lng" @click="onMarkerClicked(idx)" @load="onMarkerLoaded"></naver-marker>
       <!-- 위치제공 동의를 하지 않으면 현재위치를 마커로 표시하지 않습니다. -->
+<<<<<<< HEAD
       <naver-marker :lat="nowLocate.lat" :lng="nowLocate.lng"></naver-marker>
       <naver-info-window
         :isOpen="info"
@@ -55,17 +56,41 @@
           </b-card>
         </div>
       </naver-info-window>
+=======
+      <naver-marker :lat="nowLocate.lat" :lng="nowLocate.lng" @load="onNowMarkerLoaded"></naver-marker>
+>>>>>>> 3f26a3830512209108eb4d7807f682bc6167d066
     </naver-maps>
+    <!-- 모달 인포윈도우 -->
+    <b-modal id="marker_info" size="sm" centered hide-footer hide-header>
+      <b-container fluid>
+        <h4 class="text-center">{{infoWindow.name}}</h4>
+        <small>{{infoWindow.address}}</small>
+        <b-card-text style="font-weight: bold;">{{infoWindow.phone}}</b-card-text>
+        <b-row>
+          
+          <b-col>
+            <small>예상 입고 시간</small>
+            <small style="font-weight: bold;" >{{infoWindow.ware}}</small>
+          </b-col>
+          <b-col>
+            <small>예상 매진 시간</small>
+            <small style="font-weight: bold;" >{{infoWindow.soldout}}</small>
+          </b-col>
+        </b-row>
+      </b-container>
+    </b-modal>
   </div>
 </template>
 
 <script>
+<<<<<<< HEAD
 import Vue from 'vue'
 //import maskData from '../assets/maskDATA.json'
+=======
+import maskData from '../assets/maskDATA.json'
+>>>>>>> 3f26a3830512209108eb4d7807f682bc6167d066
 import EventBus from '@/eventbus'
-import axios from 'axios'
 
-Vue.prototype.$http = axios
 
 export default {
   name: 'Map',
@@ -86,8 +111,8 @@ export default {
       map: null,
       infoWindow:{
         name: null,
-        address : null,
-        phone : null,
+        address : '주소정보가 제공되지 않습니다.',
+        phone : '전화번호 정보가 제공되지 않습니다.',
         ware : null,
         soldout: null
       },
@@ -156,13 +181,28 @@ export default {
           }
         });
     },
+    onNowMarkerLoaded(vue){
+      vue.marker.setIcon("https://ifh.cc/g/jC6jUb.png");
+    },
+    onMarkerLoaded(vue){
+      vue.marker.setIcon("https://ifh.cc/g/EmMCH7.png");
+    },
     onMarkerClicked(idx) {
+<<<<<<< HEAD
           this.marker = this.data[idx]; // 현재 마커 할당
           this.info = !this.info; // 인포 윈도우 표시
           this.infoWindow.name = this.mask[idx].name;
           console.log(this.data[idx]);
           
           this.loadPharm(this.mask[idx].lat, this.mask[idx].lng);
+=======
+      this.marker = this.mask[idx]; // 현재 마커 할당
+      this.$bvModal.show('marker_info')
+      this.infoWindow.name = this.mask[idx].name;
+      this.infoWindow.address = this.mask[idx].addr;
+      console.log(this.mask[idx]);
+      this.loadPharm(this.mask[idx].lat, this.mask[idx].lng);
+>>>>>>> 3f26a3830512209108eb4d7807f682bc6167d066
     },
     getPharmByGPS(lat,lng){
       console.log(lat);
@@ -186,10 +226,16 @@ export default {
     //console.log("mounted")
     
     // 마스크 데이터 가공
+<<<<<<< HEAD
     ///Maskdata.storeInfos.forEach(element => {
     //  this.mask.push(element)
     //});
 
+=======
+    maskData.storeInfos.forEach(element => {
+      this.mask.push(element)
+    });
+>>>>>>> 3f26a3830512209108eb4d7807f682bc6167d066
   },
   
 }

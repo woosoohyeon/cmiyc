@@ -28,30 +28,41 @@
       <naver-marker :lat="nowLocate.lat" :lng="nowLocate.lng" @load="onNowMarkerLoaded"></naver-marker>
     </naver-maps>
     <!-- 모달 인포윈도우 -->
-    <b-modal id="marker_info" size="sm" centered hide-footer hide-header>
-      <b-container fluid>
-        <h4 class="text-center">{{infoWindow.name}}</h4>
-        <small>{{infoWindow.address}}</small>
-        <b-card-text style="font-weight: bold;">{{infoWindow.phone}}</b-card-text>
-        <b-row>
-          
-          <b-col>
-            <small>예상 입고 시간</small>
-            <small style="font-weight: bold;" >{{infoWindow.ware}}</small>
-          </b-col>
-          <b-col>
-            <small>예상 매진 시간</small>
-            <small style="font-weight: bold;" >{{infoWindow.soldout}}</small>
-          </b-col>
-        </b-row>
-      </b-container>
-    </b-modal>
+    <naver-info-window
+        :isOpen="info"
+        :marker="marker">
+        <div>
+          <b-card
+            img-src="https://picsum.photos/600/300/?image=25"
+            img-alt="Image"
+            img-top
+            style="max-width: 20rem;"
+            class="mb-2">
+            <h5 style="font-weight: bold;">{{infoWindow.name}}</h5>
+            <small>{{infoWindow.address}}</small>
+            <b-card-text style="font-weight: bold;">{{infoWindow.phone}}</b-card-text>
+            <b-container class="bv-example-row">
+              <b-row>
+                <b-col>
+                  <small>예상 입고 시간</small>
+                  <small style="font-weight: bold;" >{{infoWindow.ware}}</small>
+                </b-col>
+                <b-col>
+                  <small>예상 매진 시간</small>
+                  <small style="font-weight: bold;" >{{infoWindow.soldout}}</small>
+                  
+                </b-col>
+              </b-row>
+            </b-container>
+          </b-card>
+        </div>
+      </naver-info-window>
   </div>
 </template>
 // 네이버 객체가 안잡혀서 최적화 하려고 넣었습니다. 20.06.07 연권
 <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?clientId=gv7ysohqky"></script>
 <script>
-import maskData from '../assets/maskDATA.json'
+//import maskData from '../assets/maskDATA.json'
 import EventBus from '@/eventbus'
 
 
@@ -62,7 +73,9 @@ export default {
       this.map.setCenter(pos[0], pos[1])
       this.nowLocate.lat = pos[0];
       this.nowLocate.lng = pos[1];
+      console.log("lng"+this.nowLocate.lat)
     });
+    
   },
   data(){
     return{
@@ -129,7 +142,12 @@ export default {
       this.map = vue;
       this.nowLocate.lat = Number(this.$route.query.y)
       this.nowLocate.lng = Number(this.$route.query.x)
+<<<<<<< HEAD
       this.map.setCenter(Number(this.$route.query.y), Number(this.$route.query.x))
+=======
+      this.map.setCenter(Number(this.$route.query.y), Number(this.$route.query.x));
+      this.getPharmByGPS(Number(this.$route.query.y), Number(this.$route.query.x));
+>>>>>>> 4d5f7af5db720b7992d61254bb7c69a6061491f3
       
     },
     loadPharm(lat, lng) {
@@ -179,20 +197,40 @@ export default {
       this.markers.push(vue.marker);
     },
     onMarkerClicked(idx) {
+      //alert(this.mask[idx].name);
+      //console.log();
       this.marker = this.mask[idx]; // 현재 마커 할당
-      this.$bvModal.show('marker_info')
+      this.info = !this.info; // 인포 윈도우 표시
       this.infoWindow.name = this.mask[idx].name;
-      this.infoWindow.address = this.mask[idx].addr;
-      console.log(this.mask[idx]);
       this.loadPharm(this.mask[idx].lat, this.mask[idx].lng);
     },
+    getPharmByGPS(lat,lng){
+      console.log(lat);
+      this.$http.post("/api/getPharmByGPS/", {
+        lat: lat,
+        lng: lng
+      })
+      .then(response => {
+        if (response.status === 200) {
+          this.Maskdata = response.data;
+          console.log(this.Maskdata);
+          this.Maskdata.forEach(element => {
+            this.mask.push(element)
+          });
+          
+        }
+      });
+    }
   },
   mounted(){
-    // 마스크 데이터 가공
-    maskData.storeInfos.forEach(element => {
+    /*Maskdata.storeInfos.forEach(element => {
       this.mask.push(element)
+<<<<<<< HEAD
     });
 
+=======
+    });*/
+>>>>>>> 4d5f7af5db720b7992d61254bb7c69a6061491f3
   },
 
 }

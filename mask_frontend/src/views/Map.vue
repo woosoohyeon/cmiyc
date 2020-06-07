@@ -48,7 +48,8 @@
     </b-modal>
   </div>
 </template>
-
+// 네이버 객체가 안잡혀서 최적화 하려고 넣었습니다. 20.06.07 연권
+<script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?clientId=gv7ysohqky"></script>
 <script>
 import maskData from '../assets/maskDATA.json'
 import EventBus from '@/eventbus'
@@ -91,15 +92,44 @@ export default {
         lng: 0
       },
       mask:[],
-      }
-    },
+      markers:[],
+    }
+  },
   methods: {
     onLoad(vue){
+      // 현재 지도에 보이는 마커만 표시
+      let markers = this.markers
+      naver.maps.Event.addListener(vue.map, 'idle', function() {
+        updateMarkers(vue.map, markers);
+      });
+      function updateMarkers(map, markers) {
+          var mapBounds = map.getBounds();
+          var marker, position;
+          for (var i = 0; i < markers.length; i++) {
+              marker = markers[i]
+              position = marker.getPosition();
+              if (mapBounds.hasLatLng(position)) {
+                  showMarker(map, marker);
+              } else {
+                  hideMarker(map, marker);
+              }
+          }
+      }
+      function showMarker(map, marker) {
+          if (marker.getMap()) return;
+          marker.setMap(map);
+      }
+      function hideMarker(map, marker) {
+          if (!marker.getMap()) return;
+          marker.setMap(null);
+      }
+
+
+
       this.map = vue;
       this.nowLocate.lat = Number(this.$route.query.y)
       this.nowLocate.lng = Number(this.$route.query.x)
       this.map.setCenter(Number(this.$route.query.y), Number(this.$route.query.x))
-      console.log(this.nowLocate.lat)
       
     },
     loadPharm(lat, lng) {
@@ -146,6 +176,7 @@ export default {
     },
     onMarkerLoaded(vue){
       vue.marker.setIcon("https://ifh.cc/g/EmMCH7.png");
+      this.markers.push(vue.marker);
     },
     onMarkerClicked(idx) {
       this.marker = this.mask[idx]; // 현재 마커 할당
@@ -161,8 +192,9 @@ export default {
     maskData.storeInfos.forEach(element => {
       this.mask.push(element)
     });
+
   },
-  
+
 }
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->

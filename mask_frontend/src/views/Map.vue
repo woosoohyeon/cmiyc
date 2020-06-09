@@ -23,7 +23,7 @@
       :mapOptions="mapOptions"
       :initLayers="initLayers"
       @load="onLoad">
-      <naver-marker v-for="(item, idx) in mask" :key="idx" :lat="item.lat" :lng="item.lng" @click="onMarkerClicked(idx)" @load="onMarkerLoaded"></naver-marker>
+      <!-- <naver-marker v-for="(item, idx) in mask" :key="idx" :lat="item.lat" :lng="item.lng" @click="onMarkerClicked(idx)" @load="onMarkerLoaded"></naver-marker> -->
       <!-- 위치제공 동의를 하지 않으면 현재위치를 마커로 표시하지 않습니다. -->
       <naver-marker :lat="nowLocate.lat" :lng="nowLocate.lng" @load="onNowMarkerLoaded"></naver-marker>
     </naver-maps>
@@ -59,10 +59,10 @@
       </naver-info-window>
   </div>
 </template>
-// 네이버 객체가 안잡혀서 최적화 하려고 넣었습니다. 20.06.07 연권
+// 네이버 객체가 안잡혀서 최적화 하려고 넣었습니다. 20.06.07
 <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?clientId=gv7ysohqky"></script>
 <script>
-//import maskData from '../assets/maskDATA.json'
+import maskdata from '../assets/maskDATA.json'
 import EventBus from '@/eventbus'
 
 
@@ -105,13 +105,12 @@ export default {
         lng: 0
       },
       mask:[],
-      markers:[],
     }
   },
   methods: {
     onLoad(vue){
       // 현재 지도에 보이는 마커만 표시
-      let markers = this.markers
+      const markers = this.mask;
       naver.maps.Event.addListener(vue.map, 'idle', function() {
         updateMarkers(vue.map, markers);
       });
@@ -128,6 +127,7 @@ export default {
               }
           }
       }
+      
       function showMarker(map, marker) {
           if (marker.getMap()) return;
           marker.setMap(map);
@@ -136,18 +136,11 @@ export default {
           if (!marker.getMap()) return;
           marker.setMap(null);
       }
-
-
-
       this.map = vue;
       this.nowLocate.lat = Number(this.$route.query.y)
       this.nowLocate.lng = Number(this.$route.query.x)
-<<<<<<< HEAD
-      this.map.setCenter(Number(this.$route.query.y), Number(this.$route.query.x))
-=======
       this.map.setCenter(Number(this.$route.query.y), Number(this.$route.query.x));
       this.getPharmByGPS(Number(this.$route.query.y), Number(this.$route.query.x));
->>>>>>> 4d5f7af5db720b7992d61254bb7c69a6061491f3
       
     },
     loadPharm(lat, lng) {
@@ -193,6 +186,20 @@ export default {
       vue.marker.setIcon("https://ifh.cc/g/jC6jUb.png");
     },
     onMarkerLoaded(vue){
+      let mapBounds = this.map.map.getBounds();
+      let position = vue.marker.getPosition();
+      if(mapBounds.hasLatLng(position))
+        showMarker(this.map.map, marker);
+      else
+        hideMarker(this.map.map, marker);
+      function showMarker(map, marker) {
+          if (marker.getMap()) return;
+          marker.setMap(map);
+      }
+      function hideMarker(map, marker) {
+          if (!marker.getMap()) return;
+          marker.setMap(null)
+      }
       vue.marker.setIcon("https://ifh.cc/g/EmMCH7.png");
       this.markers.push(vue.marker);
     },
@@ -223,14 +230,17 @@ export default {
     }
   },
   mounted(){
-    /*Maskdata.storeInfos.forEach(element => {
-      this.mask.push(element)
-<<<<<<< HEAD
+    maskdata.storeInfos.forEach(element => {
+      // this.mask.push(element)
+      this.mask.push(
+        new naver.maps.Marker({
+          position: new naver.maps.LatLng(element.lat, element.lng),
+          icon: {
+            url : "https://ifh.cc/g/EmMCH7.png"
+          }
+        })
+      )
     });
-
-=======
-    });*/
->>>>>>> 4d5f7af5db720b7992d61254bb7c69a6061491f3
   },
 
 }

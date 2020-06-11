@@ -14,12 +14,11 @@
         </b-row>
         <b-row align-h="center">
           <b-list-group class="result">
-            <b-list-group-item button v-for="item in result" v-bind:key="item" style="width : 450px">
+            <b-list-group-item button v-for="(item, idx) in result" v-bind:key="idx" style="width : 450px">
                 <b-container v-on:click="newLocate(item[3],item[4])">
                   {{item[0]}}<br>
                   <span class="address">{{item[1]}}<br>
                   {{item[2]}}</span>
-
                 </b-container>
                 
             </b-list-group-item>
@@ -56,7 +55,7 @@ export default {
     newLocate(x,y){
       this.$router.push({ path: 'map', query: { x: x, y: y }})
     }
-  }
+  }//
 }
 </script>
 <style scoped>

@@ -34,7 +34,7 @@ export default {
   name: 'Home',
   data(){
     return{
-      selectedTime: ''
+      selectedTime: null
     }
   },
   methods: {

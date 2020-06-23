@@ -305,6 +305,29 @@ export default {
             mask.soldout = element.soldout
             this.mask.push(mask);
             var time = this.$route.query.time
+            console.log(time)
+            if(time == ''){
+              var d = new Date();
+              var s = ''
+              if(d.getHours().length == 1){
+                s += '0'+ d.getHours() + ":"
+              }else{
+                s += d.getHours() + ":"
+              }
+
+              if(d.getMinutes().length == 1){
+                  s += '0'+ d.getMinutes() + ':'
+              }else{
+                 s += d.getMinutes() + ':'
+              }
+
+              if(d.getSeconds().length == 1){
+                s += '0' + d.getSeconds()
+              }else{
+                s += d.getSeconds()
+              }
+              time = s
+            }
             //console.log(time);
             //console.log(element);
             /*
@@ -351,8 +374,9 @@ export default {
             }
 
             mmm.sort();
+            if(mmm[0] == 9999999){
 
-            if(mmm[0] == subfew){
+            }else if(mmm[0] == subfew){
               this.few.push(mask)
             }else if(mmm[0] == subsome){
               this.some.push(mask)
@@ -360,6 +384,8 @@ export default {
               this.empty.push(mask)
             }else if(mmm[0] == subplenty){
               this.plenty.push(mask)
+            }else{
+
             }
           });
           this.mask.sort(function (a, b) { 

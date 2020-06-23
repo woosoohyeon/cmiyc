@@ -66,7 +66,7 @@
     <b-modal id="marker_info" size="lg" centered hide-footer hide-header>
       <b-container fluid>
         <h4 class="text-center">{{infoWindow.name}}</h4>
-        <small class="text-center" >{{infoWindow.address}}</small>
+        <h6 style="text-align:center;">{{infoWindow.address}}</h6>
         <b-card-text class="text-center" style="font-weight: bold;">{{infoWindow.phone}}</b-card-text>
         <b-row>
           <b-col>

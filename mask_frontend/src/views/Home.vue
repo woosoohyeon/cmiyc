@@ -10,14 +10,17 @@
     </b-row>
     <!-- 제목 끝 -->
     <b-row align-h="center" class="mt-4">
-      <GetTime/>
+      <div>
+        <b-form-timepicker id="dp3" v-model="selectedTime" locale="ko" ></b-form-timepicker>
+      </div> 
     </b-row>
     <b-row align-h="center" class="mt-3 mb-4">
       <!-- 현재위치 받은 후 지도로 이동 -->
+      
       <b-button variant="info" @click="nowLocate" id="CurrentPosion">현재위치로 확인하기</b-button>
     </b-row>
       <!-- 주소 검색 -->
-      <Search/>
+      <Search v-bind:parentData="selectedTime" />
   </b-container>
   </div>
 </template>
@@ -25,21 +28,26 @@
 <script>
 // @ is an alias to /src
 import Purchasable from '@/components/PurchasableDay'
-import GetTime from '@/components/GetTime'
 import Search from '@/components/Search'
 
 export default {
   name: 'Home',
+  data(){
+    return{
+      selectedTime: ''
+    }
+  },
   methods: {
     nowLocate(){
+      console.log(this.selectedTime)
       navigator.geolocation.getCurrentPosition(
         pos=>{
-          this.$router.push({ path: 'map', query: {x: pos.coords.longitude, y: pos.coords.latitude }})
+          this.$router.push({ path: 'map', query: {x: pos.coords.longitude, y: pos.coords.latitude, time: this.selectedTime }})
         });
     }
   },
   components: {
-    Purchasable, GetTime, Search
+    Purchasable, Search
   },
 }
 </script>

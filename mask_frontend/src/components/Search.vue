@@ -33,6 +33,7 @@ import axios from 'axios'
 
 export default {
   name: 'Search',
+  props: ['parentData'],
   data(){
     return{
       input : null,
@@ -53,7 +54,7 @@ export default {
         .catch(error=>console.log(error))
     },
     newLocate(x,y){
-      this.$router.push({ path: 'map', query: { x: x, y: y }})
+      this.$router.push({ path: 'map', query: { x: x, y: y, time: this.parentData }})
     }
   }//
 }

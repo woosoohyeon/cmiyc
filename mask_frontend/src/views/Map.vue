@@ -23,11 +23,11 @@
             <b-row>
               <b-col>
                 <small>예상 입고 시간</small><br/>
-                <small style="font-weight: bold;" >{{item.ware}}</small>
+                <small style="font-weight: bold;" >{{item.pharm.ware}}</small>
               </b-col>
               <b-col>
                 <small>예상 매진 시간</small><br/>
-                <small style="font-weight: bold;" >{{item.soldout}}</small>
+                <small style="font-weight: bold;" >{{item.pharm.soldout}}</small>
               </b-col>
             </b-row>
             <br/>
@@ -43,7 +43,11 @@
       :mapOptions="mapOptions"
       :initLayers="initLayers"
       @load="onLoad">
-      <naver-marker v-for="(item, idx) in mask" :key="idx" :lat="item.pharm.lat" :lng="item.pharm.lng" @click="onMarkerClicked(idx)" @load="onMarkerLoaded"></naver-marker>
+     
+      <naver-marker v-for="(item, idx) in few" :key="item.pharm.id" :lat="item.pharm.lat" :lng="item.pharm.lng" @click="onMarkerClicked(idx)" @load="onFewMarkerLoaded"></naver-marker>
+      <naver-marker v-for="(item, idx) in some" :key="item.pharm.id" :lat="item.pharm.lat" :lng="item.pharm.lng" @click="onMarkerClicked(idx)" @load="onSomeMarkerLoaded"></naver-marker>
+      <naver-marker v-for="(item, idx) in plenty" :key="item.pharm.id" :lat="item.pharm.lat" :lng="item.pharm.lng" @click="onMarkerClicked(idx)" @load="onPlentyMarkerLoaded"></naver-marker>
+      <naver-marker v-for="(item, idx) in empty" :key="item.pharm.id" :lat="item.pharm.lat" :lng="item.pharm.lng" @click="onMarkerClicked(idx)" @load="onEmptyMarkerLoaded"></naver-marker>
       <!-- 위치제공 동의를 하지 않으면 현재위치를 마커로 표시하지 않습니다. -->
       <naver-marker :lat="nowLocate.lat" :lng="nowLocate.lng" @load="onNowMarkerLoaded"></naver-marker>
     </naver-maps>
@@ -108,7 +112,12 @@ export default {
       },
       mask:[],
       markers:[],
+      fewMarkers:[],
       top3: [],
+      plenty:[],
+      some:[],
+      empty:[],
+      few: []
     }
   },
   methods: {
@@ -128,12 +137,20 @@ export default {
         nowLng = this.nowLocate.lng
         this.getPharmByGPS(y,x);
       }
+      const reloadPharm = (x,y) => {
+        this.nowLocate.lat = y;
+        this.nowLocate.lng = x;
+        nowLat = this.nowLocate.lat
+        nowLng = this.nowLocate.lng
+        this.reloadPharm();
+      }
 
       // 현재 지도에 보이는 마커만 표시
       let markers = this.markers
 
       naver.maps.Event.addListener(vue.map, 'click', function(e) {
-        getPharm(e.coord.x, e.coord.y);
+        //getPharm(e.coord.x, e.coord.y);
+        reloadPharm(e.coord.x, e.coord.y);
         updateMarkers(vue.map, markers);
       });
 
@@ -165,6 +182,8 @@ export default {
       function showMarker(map, marker) {
           if (marker.getMap()) return;
           marker.setMap(map);
+          if(fewMarker.getMap()) return;
+          fewMarker.setMap(map)
       }
       function hideMarker(map, marker) {
           //마커 로직 변경으로 hide 해 줄 필요가 없어짐.
@@ -172,17 +191,28 @@ export default {
          // marker.setMap(null);
       }
     },
-    loadPharm(lat, lng) {
-      this.$http.post("/api/loadPharm", { lat: lat, lng: lng })
+    getDateString(day){
+      switch (day) {
+              case 0: return "sunday"
+              case 1: return "monday";
+              case 2: return "tuesday";
+              case 3: return "wednesday";
+              case 4: return "tursday";
+              case 5: return "friday";
+              case 6: return "saturday";
+      }
+    },
+    loadPharm(id) {
+      var day = this.getDateString(new Date().getDay());
+      this.$http.post("/api/loadPharm", { id: id, day: day })
       .then(response => {
         if (response.status === 200) {
             var data = response.data;
             if(data[0]!= null){
-              var date = new Date();
               this.infoWindow.address = data[0].address;
               this.infoWindow.phone = data[0].phone;
-              this.getWareById(data[0].id, date.getDay(), null);
-              this.getSoldoutById(data[0].id, date.getDay(), null);
+              this.infoWindow.ware = data[0].ware;
+              this.infoWindow.soldout = data[0].soldout;
             }
           }
         });
@@ -196,61 +226,9 @@ export default {
               var date = new Date();
               this.infoWindow.address = data[0].address;
               this.infoWindow.phone = data[0].phone;
-              this.getWareById(data[0].id, date.getDay(), null);
-              this.getSoldoutById(data[0].id, date.getDay(), null);
+              this.infoWindow.ware = data[0].ware;
+              this.infoWindow.soldout = data[0].soldout;
             }
-          }
-        });
-    }
-    ,
-    getWareById(id, day, idx) {
-      this.$http.post("/api/getWareById/", { id : id })
-      .then(response => {
-        if (response.status === 200) {
-            var data = response.data;
-            var selectedData = null;
-            switch (day) {
-              case 0: selectedData = data[0].sunday;
-              case 1: selectedData = data[0].monday;  
-              case 2: selectedData = data[0].thusday;             
-              case 3: selectedData = data[0].wednesday;
-              case 4: selectedData = data[0].thursday;
-              case 5: selectedData = data[0].friday;
-              case 6: selectedData = data[0].saturday;
-            }
-            if (selectedData != null){
-              this.infoWindow.ware = selectedData;
-              if(idx != null) this.top3[idx].ware = selectedData;
-            }else{
-              this.infoWindow.ware = "알 수 없습니다.";
-              if(idx != null) this.top3[idx].ware = "알 수 없습니다.";
-            }
-          }
-        });
-    },
-    getSoldoutById(id, day, idx) {
-      this.$http.post("/api/getSoldoutById/", { id : id })
-      .then(response => {
-        if (response.status === 200) {
-            var data = response.data;
-            var selectedData = null;
-            switch (day) {
-              case 0: selectedData = data[0].sunday;
-              case 1: selectedData = data[0].monday;
-              case 2: selectedData = data[0].tuesday;
-              case 3: selectedData = data[0].wednesday;
-              case 4: selectedData = data[0].tursday;
-              case 5: selectedData = data[0].friday;
-              case 6: selectedData = data[0].saturday;
-            }
-            if (selectedData != null){
-              this.infoWindow.soldout = selectedData;
-              if(idx != null) this.top3[idx].soldout = selectedData;
-            }else{
-              this.infoWindow.soldout = "알 수 없습니다.";
-              if(idx != null) this.top3[idx].soldout = "알 수 없습니다.";
-            }
-            
           }
         });
     },
@@ -260,22 +238,60 @@ export default {
     onMarkerLoaded(vue){
       vue.marker.setIcon("https://ifh.cc/g/EmMCH7.png");
       this.markers.push(vue.marker);
+      //red : https://ifh.cc/g/DBv0FO.png
+      //green : https://ifh.cc/g/86P9lz.png
+      //yello : https://ifh.cc/g/KtzXJn.png
+      //grey : https://ifh.cc/g/YEWqcf.png
+    },
+    onFewMarkerLoaded(vue){
+      vue.marker.setIcon("https://ifh.cc/g/DBv0FO.png");
+      this.fewMarkers.push(vue.marker);
+    },
+    onSomeMarkerLoaded(vue){
+      vue.marker.setIcon("https://ifh.cc/g/KtzXJn.png");
+      this.fewMarkers.push(vue.marker);
+    },
+    onEmptyMarkerLoaded(vue){
+      vue.marker.setIcon("https://ifh.cc/g/YEWqcf.png");
+      this.fewMarkers.push(vue.marker);
+    },
+    onPlentyMarkerLoaded(vue){
+      vue.marker.setIcon("https://ifh.cc/g/86P9lz.png");
+      this.fewMarkers.push(vue.marker);
     },
     onMarkerClicked(idx) {
       this.marker = this.mask[idx].pharm; // 현재 마커 할당
       this.info = !this.info; // 인포 윈도우 표시
       this.infoWindow.name = this.mask[idx].pharm.name;
-      this.loadPharm(this.mask[idx].pharm.lat, this.mask[idx].pharm.lng);
+      this.loadPharm(this.mask[idx].pharm.id);
       this.$bvModal.show('marker_info');
     },
+    reloadPharm(){
+      var tempMask = this.mask;
+      this.mask = [];
+      tempMask.forEach(element => {
+        element.distance = this.getDistanceInKm(this.nowLocate.lat, this.nowLocate.lng, element.pharm.lat, element.pharm.lng);
+        this.mask.push(element);
+      });
+      this.mask.sort(function (a, b) { 
+        return a.distance < b.distance ? -1 : a.distance > b.distance ? 1 : 0;  
+      });
+      this.getTop3();
+    },
     getPharmByGPS(lat,lng){
+      var day = this.getDateString(new Date().getDay());
       this.$http.post("/api/getPharmByGPS/", {
         lat: lat,
-        lng: lng
+        lng: lng,
+        day: day
       })
       .then(response => {
         if (response.status === 200) {
-          this.mask=[];
+          this.mask = [];
+          this.few = [];
+          this.some = [];
+          this.empty = [];
+          this.plenty = [];
           var maskData = response.data;
           maskData.forEach(element => {
             var mask = {
@@ -286,7 +302,65 @@ export default {
             }
             mask.pharm = element;
             mask.distance = this.getDistanceInKm(this.nowLocate.lat, this.nowLocate.lng, element.lat, element.lng);
+            mask.soldout = element.soldout
             this.mask.push(mask);
+            var time = this.$route.query.time
+            //console.log(time);
+            //console.log(element);
+            /*
+            tosome 시간 전 = plenty
+            tosome 시간 후 = some
+            tofew 시간 후 = few
+            soldout 시간 후 = empty
+             */
+            //console.log(mask.pharm.tosome)
+            
+            //console.log(mask.pharm.tosome)
+            //console.log(time.replace(":","").replace(":",""))
+
+            var subfew    = 9999999
+            var subsome   = 9999999
+            var subempty  = 9999999
+            var subplenty = 9999999
+            var mmm = [9999999,9999999,9999999,9999999]
+
+
+            if(mask.pharm.tofew != null){
+              var t1 = Number(time.replace(":","").replace(":",""))
+              var t2 = Number(mask.pharm.tofew.replace(":","").replace(":",""))
+              mmm[0] = Math.abs(t1 - t2)
+              subfew = mmm[0]
+            }
+            if(mask.pharm.tosome!= null){
+              var t1 = Number(time.replace(":","").replace(":",""))
+              var t2 = Number(mask.pharm.tosome.replace(":","").replace(":",""))
+              mmm[1] = Math.abs(t1 - t2)
+              subsome = mmm[1]
+            }
+            if(mask.pharm.soldout != null){
+              var t1 = Number(time.replace(":","").replace(":",""))
+              var t2 = Number(mask.pharm.soldout.replace(":","").replace(":",""))
+              mmm[2] = Math.abs(t1 - t2)
+              subempty = mmm[2]
+            }
+            if(mask.pharm.ware != null){
+              var t1 = Number(time.replace(":","").replace(":",""))
+              var t2 = Number(mask.pharm.ware.replace(":","").replace(":",""))
+              mmm[3] = Math.abs(t1 - t2)
+              subplenty = mmm[3]
+            }
+
+            mmm.sort();
+
+            if(mmm[0] == subfew){
+              this.few.push(mask)
+            }else if(mmm[0] == subsome){
+              this.some.push(mask)
+            }else if(mmm[0] == subempty){
+              this.empty.push(mask)
+            }else if(mmm[0] == subplenty){
+              this.plenty.push(mask)
+            }
           });
           this.mask.sort(function (a, b) { 
             return a.distance < b.distance ? -1 : a.distance > b.distance ? 1 : 0;  
@@ -312,16 +386,13 @@ export default {
     },
     getTop3(){
       this.top3 = [];
-      var date = new Date();
       var TOP3_MAX_SIZE = 3;
       if(this.mask.length >= TOP3_MAX_SIZE){
         for (var idx = 0; idx < TOP3_MAX_SIZE; idx++){
           this.top3.push(this.mask[idx]);
-          this.top3[idx].ware = this.getWareById(this.mask[idx].pharm.id, date.getDay(),idx);
-          this.top3[idx].soldout = this.getSoldoutById(this.mask[idx].pharm.id, date.getDay(),idx);
         }
       }
-    }
+    },
   },
   mounted(){
     /*Maskdata.storeInfos.forEach(element => {
@@ -331,6 +402,5 @@ export default {
 
 }
 </script>
-<!— Add "scoped" attribute to limit CSS to this component only —>
 <style scoped>
 </style>

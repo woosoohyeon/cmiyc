@@ -1,19 +1,32 @@
 <!-- bootstrap의 b-form-timepicker사용 20200501김민지주석만작성-->
+
 <template>
   <div>
-   <b-form-timepicker v-model="selectedTime" locale="en"></b-form-timepicker>    
+       
   </div>
 </template>
 
 <script>
+  import Vue from "vue";
+  export const EventBus = new Vue();
+
   export default {
     name: 'GetTime',
     data() {
       return {
-          selectedTime: null
+          
       }
     },
+    methods: {
+      
+    },
+    mounted(){
+      console.log(this.selectedTime)
+      this.$emit('time', this.SelectedTime)
+    }
+    
   }
+ 
 </script>
 <style scoped>
 </style>

@@ -1,79 +1,25 @@
 var express = require('express');
 var router = express.Router();
-
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  
-});
-
-router.post('/api/loadPharm', function(req, res, next) {
-  var lat = req.body.lat;
-  var lng = req.body.lng;
-
-  var mysql = require('mysql');
+var mysql = require('mysql');
   var connection = mysql.createConnection({
     host : "donghyeon.synology.me",
     port: 3307,
     user : "maskteam",
     password : "aktmzmxla1Q!",
     database : "mask"
-  })
-  connection.connect(function(err){
-    if (err) throw err;
-    //console.log(lat);
-    //console.log(lng);
-    connection.query("SELECT * FROM pharm WHERE lat = ? and lng = ?",[Number(lat), Number(lng)], function (err, result, fields){
-      res.send(result);
-      if (err) throw err;
-      console.log(result);
-    });
-  });
 });
+connection.connect();
 
-router.post('/api/getWareById/', function(req, res, next) {
+router.post('/api/loadPharm/', function(req, res, next) {
   var id = req.body.id;
-
-  var mysql = require('mysql');
-  var connection = mysql.createConnection({
-    host : "donghyeon.synology.me",
-    port: 3307,
-    user : "maskteam",
-    password : "aktmzmxla1Q!",
-    database : "mask"
-  })
-  connection.connect(function(err){
+  var day = req.body.day;
+  connection.query("SELECT * FROM pharm LEFT JOIN "+day+" ON pharm.id = "+day+".id WHERE pharm.id = ?",id, function (err, result, fields){
+    res.send(result);
+    console.log(result)
     if (err) throw err;
-
-    connection.query("SELECT * FROM ware_predict_time WHERE id = ?",id, function (err, result, fields){
-      res.send(result);
-      if (err) throw err;
-      console.log(result);
-    });
   });
 });
 
-
-router.post('/api/getSoldoutById/', function(req, res, next) {
-  var id = req.body.id;
-
-  var mysql = require('mysql');
-  var connection = mysql.createConnection({
-    host : "donghyeon.synology.me",
-    port: 3307,
-    user : "maskteam",
-    password : "aktmzmxla1Q!",
-    database : "mask"
-  })
-  connection.connect(function(err){
-    if (err) throw err;
-
-    connection.query("SELECT * FROM soldout_predict_time WHERE id = ?",id, function (err, result, fields){
-      res.send(result);
-      if (err) throw err;
-      console.log(result);
-    });
-  });
-});
 
 /**
  * 06 06
@@ -88,29 +34,14 @@ router.post('/api/getSoldoutById/', function(req, res, next) {
 router.post('/api/getPharmByGPS/', function(req, res, next) {
   var lat = req.body.lat;
   var lng = req.body.lng;
-  console.log(lat);
-
-  var mysql = require('mysql');
-  var connection = mysql.createConnection({
-    host : "donghyeon.synology.me",
-    port: 3307,
-    user : "maskteam",
-    password : "aktmzmxla1Q!",
-    database : "mask"
-  })
-  connection.connect(function(err){
+  var day = req.body.day;
+  
+  connection.query("SELECT * FROM pharm LEFT JOIN "+day+" ON pharm.id = "+day+".id WHERE (lng BETWEEN ? AND ?) AND (lat BETWEEN ? AND ?) ",[Number(lng-0.04), Number(lng+0.04),Number(lat-0.05), Number(lat+0.05) ], function (err, result, fields){
+    res.send(result);
+    console.log(result.length)
     if (err) throw err;
-    //console.log(lat);
-    //console.log(lng);
-    //console.log(Number(lng-1));
-    connection.query("SELECT * FROM pharm WHERE (lng BETWEEN ? AND ?) AND (lat BETWEEN ? AND ?) ",[Number(lng-0.04), Number(lng+0.04),Number(lat-0.05), Number(lat+0.05) ], function (err, result, fields){
-      res.send(result);
-      if (err) throw err;
-      //console.log(result);
-    });
+    //console.log(result);
   });
 });
-
-
 
 module.exports = router;

@@ -26,9 +26,20 @@
                 <small style="font-weight: bold;" >{{item.pharm.ware}}</small>
               </b-col>
               <b-col>
+                <small>예상 30% 소진 시간</small><br/>
+                <small style="font-weight: bold;" >{{item.pharm.tosome}}</small>
+              </b-col>
+            <b-row>
+               <b-col>
+                <small>예상 70% 소진 시간</small><br/>
+                <small style="font-weight: bold;" >{{item.pharm.tofew}}</small>
+              </b-col>
+              <b-col>
                 <small>예상 매진 시간</small><br/>
                 <small style="font-weight: bold;" >{{item.pharm.soldout}}</small>
               </b-col>
+            </b-row>
+             
             </b-row>
             <br/>
             <br/>
@@ -52,16 +63,24 @@
       <naver-marker :lat="nowLocate.lat" :lng="nowLocate.lng" @load="onNowMarkerLoaded"></naver-marker>
     </naver-maps>
     <!-- 모달 인포윈도우 -->
-    <b-modal id="marker_info" size="sm" centered hide-footer hide-header>
+    <b-modal id="marker_info" size="lg" centered hide-footer hide-header>
       <b-container fluid>
         <h4 class="text-center">{{infoWindow.name}}</h4>
-        <small>{{infoWindow.address}}</small>
-        <b-card-text style="font-weight: bold;">{{infoWindow.phone}}</b-card-text>
+        <small class="text-center" >{{infoWindow.address}}</small>
+        <b-card-text class="text-center" style="font-weight: bold;">{{infoWindow.phone}}</b-card-text>
         <b-row>
           <b-col>
             <small>예상 입고 시간</small><br/>
             <small style="font-weight: bold;" >{{infoWindow.ware}}</small>
           </b-col>
+          <b-col>
+                <small>예상 30% 소진 시간</small><br/>
+                <small style="font-weight: bold;" >{{infoWindow.tosome}}</small>
+              </b-col>
+              <b-col>
+                <small>예상 70% 소진 시간</small><br/>
+                <small style="font-weight: bold;" >{{infoWindow.tofew}}</small>
+              </b-col>
           <b-col>
             <small>예상 매진 시간</small><br/>
             <small style="font-weight: bold;" >{{infoWindow.soldout}}</small>
@@ -94,7 +113,9 @@ export default {
         address : '주소정보가 제공되지 않습니다.',
         phone : '전화번호 정보가 제공되지 않습니다.',
         ware : '로딩 중 입니다...',
-        soldout: '로딩 중 입니다...'
+        soldout: '로딩 중 입니다...',
+        tosome: '로딩 중 입니다... ',
+        tofew: '로딩 중 입니다... '
       },
       marker: null,
       mapOptions: {
@@ -213,6 +234,17 @@ export default {
               this.infoWindow.phone = data[0].phone;
               this.infoWindow.ware = data[0].ware;
               this.infoWindow.soldout = data[0].soldout;
+              this.infoWindow.tosome = data[0].tosome;
+              this.infoWindow.tofew = data[0].tofew;
+              if(data[0].soldout == null){
+                this.infoWindow.soldout = "매진 안 됨"
+              }
+              if(data[0].tosome == null){
+                this.infoWindow.tosome = "알 수 없음"
+              }
+              if(data[0].tofew == null){
+                this.infoWindow.tofew = "알 수 없음"
+              }
             }
           }
         });
@@ -263,6 +295,8 @@ export default {
       this.marker = this.mask[idx].pharm; // 현재 마커 할당
       this.info = !this.info; // 인포 윈도우 표시
       this.infoWindow.name = this.mask[idx].pharm.name;
+      this.infoWindow.tofew = this.mask[idx].pharm.tofew;
+      this.infoWindow.tosome = this.mask[idx].pharm.tosome;
       this.loadPharm(this.mask[idx].pharm.id);
       this.$bvModal.show('marker_info');
     },
@@ -297,16 +331,13 @@ export default {
             var mask = {
               pharm: null,
               distance: 99,
-              ware: null,
-              soldout: null
             }
             mask.pharm = element;
             mask.distance = this.getDistanceInKm(this.nowLocate.lat, this.nowLocate.lng, element.lat, element.lng);
             mask.soldout = element.soldout
             this.mask.push(mask);
             var time = this.$route.query.time
-            console.log(time)
-            if(time == ''){
+            if(time == '' || time == null){
               var d = new Date();
               var s = ''
               if(d.getHours().length == 1){
@@ -328,18 +359,6 @@ export default {
               }
               time = s
             }
-            //console.log(time);
-            //console.log(element);
-            /*
-            tosome 시간 전 = plenty
-            tosome 시간 후 = some
-            tofew 시간 후 = few
-            soldout 시간 후 = empty
-             */
-            //console.log(mask.pharm.tosome)
-            
-            //console.log(mask.pharm.tosome)
-            //console.log(time.replace(":","").replace(":",""))
 
             var subfew    = 9999999
             var subsome   = 9999999
@@ -352,40 +371,60 @@ export default {
               var t1 = Number(time.replace(":","").replace(":",""))
               var t2 = Number(mask.pharm.tofew.replace(":","").replace(":",""))
               mmm[0] = Math.abs(t1 - t2)
-              subfew = mmm[0]
+              subfew = (t1-t2)
             }
-            if(mask.pharm.tosome!= null){
+            if(mask.pharm.tosome != null){
               var t1 = Number(time.replace(":","").replace(":",""))
               var t2 = Number(mask.pharm.tosome.replace(":","").replace(":",""))
               mmm[1] = Math.abs(t1 - t2)
-              subsome = mmm[1]
+              subsome = (t1-t2)
             }
             if(mask.pharm.soldout != null){
               var t1 = Number(time.replace(":","").replace(":",""))
               var t2 = Number(mask.pharm.soldout.replace(":","").replace(":",""))
               mmm[2] = Math.abs(t1 - t2)
-              subempty = mmm[2]
+              subempty = (t1-t2)
             }
             if(mask.pharm.ware != null){
               var t1 = Number(time.replace(":","").replace(":",""))
               var t2 = Number(mask.pharm.ware.replace(":","").replace(":",""))
               mmm[3] = Math.abs(t1 - t2)
-              subplenty = mmm[3]
+              subplenty = (t1-t2)
             }
-
+            
             mmm.sort();
+            console.log(mmm)
             if(mmm[0] == 9999999){
-
-            }else if(mmm[0] == subfew){
-              this.few.push(mask)
-            }else if(mmm[0] == subsome){
-              this.some.push(mask)
-            }else if(mmm[0] == subempty){
-              this.empty.push(mask)
-            }else if(mmm[0] == subplenty){
-              this.plenty.push(mask)
-            }else{
-
+              //console.log("fucc")
+            }else if(mmm[0] == Math.abs(subfew)){
+              if(subfew > 0){
+                this.few.push(mask)
+              }else{
+                this.some.push(mask)
+              }
+            }else if(mmm[0] == Math.abs(subsome)){
+              if(subsome > 0 ){
+                this.some.push(mask)
+              }else{
+                this.plenty.push(mask)
+              }
+            }else if(mmm[0] == Math.abs(subempty)){
+                if(subempty >= 0){
+                  this.empty.push(mask)
+                }else{
+                  this.few.push(mask)
+                }
+            }else if(mmm[0] == Math.abs(subplenty)){
+              if(mask.pharm.tosome != null){
+                if(subplenty > 0){
+                  this.some.push(mask)
+                }else{
+                  this.plenty.push(mask)
+                }
+              }else{
+                this.plenty.push(mask);
+              }
+              
             }
           });
           this.mask.sort(function (a, b) { 

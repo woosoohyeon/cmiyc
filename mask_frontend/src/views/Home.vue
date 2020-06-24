@@ -16,7 +16,6 @@
     </b-row>
     <b-row align-h="center" class="mt-3 mb-4">
       <!-- 현재위치 받은 후 지도로 이동 -->
-      
       <b-button variant="info" @click="nowLocate" id="CurrentPosion">현재위치로 확인하기</b-button>
     </b-row>
       <!-- 주소 검색 -->

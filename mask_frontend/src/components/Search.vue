@@ -3,24 +3,23 @@
     <b-form-group>
       <b-container fluid>
         <b-row align-h="center">
-          <b-col cols="3"></b-col>
+          <b-col cols="3" />
           <b-col cols="5" id = "SearchWrap">
             <b-form-input v-model="input" placeholder="Enter your name" @keyup="search"></b-form-input>
 			<b-button variant="outline-primary" size="" align-v="center" v-on:click="search" id="searchBtn">
 				<img src="../../public/serch.png" alt="My Image">
 			</b-button>
           </b-col>
-          <b-col cols="3"></b-col>
+          <b-col cols="3" />
         </b-row>
         <b-row align-h="center">
           <b-list-group class="result">
             <b-list-group-item button v-for="(item, idx) in result" v-bind:key="idx" style="width : 450px">
-                <b-container v-on:click="newLocate(item[3],item[4])">
-                  {{item[0]}}<br>
-                  <span class="address">{{item[1]}}<br>
-                  {{item[2]}}</span>
-                </b-container>
-                
+              <b-container v-on:click="newLocate(item[3],item[4])">
+                {{item[0]}}<br>
+                <span class="address">{{item[1]}}<br>
+                {{item[2]}}</span>
+              </b-container>
             </b-list-group-item>
           </b-list-group>
         </b-row>

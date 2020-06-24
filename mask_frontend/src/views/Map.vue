@@ -359,6 +359,7 @@ export default {
               }
               time = s
             }
+            //console.log(time);
 
             var subfew    = 9999999
             var subsome   = 9999999
@@ -393,7 +394,7 @@ export default {
             }
             
             mmm.sort();
-            console.log(mmm)
+            //console.log(mmm)
             if(mmm[0] == 9999999){
               //console.log("fucc")
             }else if(mmm[0] == Math.abs(subfew)){
@@ -415,16 +416,7 @@ export default {
                   this.few.push(mask)
                 }
             }else if(mmm[0] == Math.abs(subplenty)){
-              if(mask.pharm.tosome != null){
-                if(subplenty > 0){
-                  this.some.push(mask)
-                }else{
-                  this.plenty.push(mask)
-                }
-              }else{
-                this.plenty.push(mask);
-              }
-              
+              this.plenty.push(mask)
             }
           });
           this.mask.sort(function (a, b) { 

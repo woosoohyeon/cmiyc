@@ -55,15 +55,15 @@
       :initLayers="initLayers"
       @load="onLoad">
      
-      <naver-marker v-for="(item, idx) in few" :key="item.pharm.id" :lat="item.pharm.lat" :lng="item.pharm.lng" @click="onMarkerClicked(idx)" @load="onFewMarkerLoaded"></naver-marker>
-      <naver-marker v-for="(item, idx) in some" :key="item.pharm.id" :lat="item.pharm.lat" :lng="item.pharm.lng" @click="onMarkerClicked(idx)" @load="onSomeMarkerLoaded"></naver-marker>
-      <naver-marker v-for="(item, idx) in plenty" :key="item.pharm.id" :lat="item.pharm.lat" :lng="item.pharm.lng" @click="onMarkerClicked(idx)" @load="onPlentyMarkerLoaded"></naver-marker>
-      <naver-marker v-for="(item, idx) in empty" :key="item.pharm.id" :lat="item.pharm.lat" :lng="item.pharm.lng" @click="onMarkerClicked(idx)" @load="onEmptyMarkerLoaded"></naver-marker>
+      <naver-marker v-for="(item, idx) in few" :key="item.pharm.id" :lat="item.pharm.lat" :lng="item.pharm.lng" @click="onFewMarkerClicked(idx)" @load="onFewMarkerLoaded"></naver-marker>
+      <naver-marker v-for="(item, idx) in some" :key="item.pharm.id" :lat="item.pharm.lat" :lng="item.pharm.lng" @click="onSomeMarkerClicked(idx)" @load="onSomeMarkerLoaded"></naver-marker>
+      <naver-marker v-for="(item, idx) in plenty" :key="item.pharm.id" :lat="item.pharm.lat" :lng="item.pharm.lng" @click="onPlentyMarkerClicked(idx)" @load="onPlentyMarkerLoaded"></naver-marker>
+      <naver-marker v-for="(item, idx) in empty" :key="item.pharm.id" :lat="item.pharm.lat" :lng="item.pharm.lng" @click="onEmptyMarkerClicked(idx)" @load="onEmptyMarkerLoaded"></naver-marker>
       <!-- 위치제공 동의를 하지 않으면 현재위치를 마커로 표시하지 않습니다. -->
       <naver-marker :lat="nowLocate.lat" :lng="nowLocate.lng" @load="onNowMarkerLoaded"></naver-marker>
     </naver-maps>
     <!-- 모달 인포윈도우 -->
-    <b-modal id="marker_info" size="lg" centered hide-footer hide-header>
+    <b-modal id="marker_info" size="md" centered hide-footer hide-header>
       <b-container fluid>
         <h4 class="text-center">{{infoWindow.name}}</h4>
         <h6 style="text-align:center;">{{infoWindow.address}}</h6>
@@ -74,18 +74,22 @@
             <small style="font-weight: bold;" >{{infoWindow.ware}}</small>
           </b-col>
           <b-col>
-                <small>예상 30% 소진 시간</small><br/>
-                <small style="font-weight: bold;" >{{infoWindow.tosome}}</small>
-              </b-col>
-              <b-col>
-                <small>예상 70% 소진 시간</small><br/>
-                <small style="font-weight: bold;" >{{infoWindow.tofew}}</small>
-              </b-col>
+            <small>예상 30% 소진 시간</small><br/>
+            <small style="font-weight: bold;" >{{infoWindow.tosome}}</small>
+          </b-col>
+        </b-row>
+        <b-row>
+          <b-col>
+            <small>예상 70% 소진 시간</small><br/>
+            <small style="font-weight: bold;" >{{infoWindow.tofew}}</small>
+          </b-col>
           <b-col>
             <small>예상 매진 시간</small><br/>
             <small style="font-weight: bold;" >{{infoWindow.soldout}}</small>
           </b-col>
         </b-row>
+          
+        
       </b-container>
     </b-modal>   
   </div>
@@ -132,7 +136,7 @@ export default {
         lng: 0
       },
       mask:[],
-      markers:[],
+
       fewMarkers:[],
       plentyMarkers: [],
       someMarkers: [],
@@ -168,14 +172,23 @@ export default {
         nowLng = this.nowLocate.lng
         this.reloadPharm();
       }
-
+/*
       // 현재 지도에 보이는 마커만 표시
       let markers = this.markers
+*/
+      let fewMarkers = this.fewMarkers;
+      let someMarkers = this.someMarkers;
+      let plentyMarkers = this.plentyMarkers;
+      let emptyMarkers = this.emptyMarkers;
+
 
       naver.maps.Event.addListener(vue.map, 'click', function(e) {
         //getPharm(e.coord.x, e.coord.y);
         reloadPharm(e.coord.x, e.coord.y);
-        updateMarkers(vue.map, markers);
+        updateMarkers(vue.map, fewMarkers);
+        updateMarkers(vue.map, someMarkers);
+        updateMarkers(vue.map, plentyMarkers);
+        updateMarkers(vue.map, emptyMarkers);
       });
 
       naver.maps.Event.addListener(vue.map, 'idle', function() {
@@ -187,7 +200,10 @@ export default {
            nowLat - DETECT_RANGE > mapCenter.y){
           getPharm(mapCenter.x, mapCenter.y);
         }
-        updateMarkers(vue.map, markers);
+        updateMarkers(vue.map, fewMarkers);
+        updateMarkers(vue.map, someMarkers);
+        updateMarkers(vue.map, plentyMarkers);
+        updateMarkers(vue.map, emptyMarkers);
       });
 
       function updateMarkers(map, markers) {
@@ -226,47 +242,6 @@ export default {
               case 6: return "saturday";
       }
     },
-    loadPharm(id) {
-      var day = this.getDateString(new Date().getDay());
-      this.$http.post("/api/loadPharm", { id: id, day: day })
-      .then(response => {
-        if (response.status === 200) {
-            var data = response.data;
-            if(data[0]!= null){
-              this.infoWindow.address = data[0].address;
-              this.infoWindow.phone = data[0].phone;
-              this.infoWindow.ware = data[0].ware;
-              this.infoWindow.soldout = data[0].soldout;
-              this.infoWindow.tosome = data[0].tosome;
-              this.infoWindow.tofew = data[0].tofew;
-              if(data[0].soldout == null){
-                this.infoWindow.soldout = "매진 안 됨"
-              }
-              if(data[0].tosome == null){
-                this.infoWindow.tosome = "알 수 없음"
-              }
-              if(data[0].tofew == null){
-                this.infoWindow.tofew = "알 수 없음"
-              }
-            }
-          }
-        });
-    },
-    loadPharmById(id) {
-      this.$http.post("/api/loadPharmById", { id : id })
-      .then(response => {
-        if (response.status === 200) {
-            var data = response.data;
-            if(data[0]!= null){
-              var date = new Date();
-              this.infoWindow.address = data[0].address;
-              this.infoWindow.phone = data[0].phone;
-              this.infoWindow.ware = data[0].ware;
-              this.infoWindow.soldout = data[0].soldout;
-            }
-          }
-        });
-    },
     onNowMarkerLoaded(vue){
       vue.marker.setIcon("https://ifh.cc/g/jC6jUb.png");
     },
@@ -294,13 +269,92 @@ export default {
       vue.marker.setIcon("https://ifh.cc/g/86P9lz.png");
       this.plentyMarkers.push(vue.marker);
     },
-    onMarkerClicked(idx) {
-      this.marker = this.mask[idx].pharm; // 현재 마커 할당
+    onFewMarkerClicked(idx) {
+      this.marker = this.few[idx].pharm; // 현재 마커 할당
       this.info = !this.info; // 인포 윈도우 표시
-      this.infoWindow.name = this.mask[idx].pharm.name;
-      this.infoWindow.tofew = this.mask[idx].pharm.tofew;
-      this.infoWindow.tosome = this.mask[idx].pharm.tosome;
-      this.loadPharm(this.mask[idx].pharm.id);
+      this.infoWindow.address = this.few[idx].pharm.address;
+      this.infoWindow.phone = this.few[idx].pharm.phone;
+      this.infoWindow.name = this.few[idx].pharm.name;
+      this.infoWindow.tofew = this.few[idx].pharm.tofew;
+      this.infoWindow.tosome = this.few[idx].pharm.tosome;
+      this.infoWindow.ware = this.few[idx].pharm.ware;
+      this.infoWindow.soldout = this.few[idx].pharm.soldout;
+      if(this.few[idx].pharm.soldout == null){
+        this.infoWindow.soldout = "매진 안 됨"
+      }
+      if(this.few[idx].pharm.tosome == null){
+        this.infoWindow.tosome = "알 수 없음"
+      }
+      if(this.few[idx].pharm.tofew == null){
+        this.infoWindow.tofew = "알 수 없음"
+      }
+      //this.loadPharm(this.mask[idx].pharm.id);
+      this.$bvModal.show('marker_info');
+    },
+    onEmptyMarkerClicked(idx) {
+      this.marker = this.empty[idx].pharm; // 현재 마커 할당
+      this.info = !this.info; // 인포 윈도우 표시
+      this.infoWindow.address = this.empty[idx].pharm.address;
+      this.infoWindow.phone = this.empty[idx].pharm.phone;
+      this.infoWindow.name = this.empty[idx].pharm.name;
+      this.infoWindow.tofew = this.empty[idx].pharm.tofew;
+      this.infoWindow.tosome = this.empty[idx].pharm.tosome;
+      this.infoWindow.ware = this.empty[idx].pharm.ware;
+      this.infoWindow.soldout = this.empty[idx].pharm.soldout;
+      if(this.empty[idx].pharm.soldout == null){
+        this.infoWindow.soldout = "매진 안 됨"
+      }
+      if(this.empty[idx].pharm.tosome == null){
+        this.infoWindow.tosome = "알 수 없음"
+      }
+      if(this.empty[idx].pharm.tofew == null){
+        this.infoWindow.tofew = "알 수 없음"
+      }
+      //this.loadPharm(this.mask[idx].pharm.id);
+      this.$bvModal.show('marker_info');
+    },
+    onPlentyMarkerClicked(idx) {
+      this.marker = this.plenty[idx].pharm; // 현재 마커 할당
+      this.info = !this.info; // 인포 윈도우 표시
+      this.infoWindow.address = this.plenty[idx].pharm.address;
+      this.infoWindow.phone = this.plenty[idx].pharm.phone;
+      this.infoWindow.name = this.plenty[idx].pharm.name;
+      this.infoWindow.tofew = this.plenty[idx].pharm.tofew;
+      this.infoWindow.tosome = this.plenty[idx].pharm.tosome;
+      this.infoWindow.ware = this.plenty[idx].pharm.ware;
+      this.infoWindow.soldout = this.plenty[idx].pharm.soldout;
+      if(this.plenty[idx].pharm.soldout == null){
+        this.infoWindow.soldout = "매진 안 됨"
+      }
+      if(this.plenty[idx].pharm.tosome == null){
+        this.infoWindow.tosome = "알 수 없음"
+      }
+      if(this.plenty[idx].pharm.tofew == null){
+        this.infoWindow.tofew = "알 수 없음"
+      }
+      //this.loadPharm(this.mask[idx].pharm.id);
+      this.$bvModal.show('marker_info');
+    },
+    onSomeMarkerClicked(idx) {
+      this.marker = this.some[idx].pharm; // 현재 마커 할당
+      this.info = !this.info; // 인포 윈도우 표시
+      this.infoWindow.address = this.some[idx].pharm.address;
+      this.infoWindow.phone = this.some[idx].pharm.phone;
+      this.infoWindow.name = this.some[idx].pharm.name;
+      this.infoWindow.tofew = this.some[idx].pharm.tofew;
+      this.infoWindow.tosome = this.some[idx].pharm.tosome;
+      this.infoWindow.ware = this.some[idx].pharm.ware;
+      this.infoWindow.soldout = this.some[idx].pharm.soldout;
+      if(this.some[idx].pharm.soldout == null){
+        this.infoWindow.soldout = "매진 안 됨"
+      }
+      if(this.some[idx].pharm.tosome == null){
+        this.infoWindow.tosome = "알 수 없음"
+      }
+      if(this.some[idx].pharm.tofew == null){
+        this.infoWindow.tofew = "알 수 없음"
+      }
+      //this.loadPharm(this.mask[idx].pharm.id);
       this.$bvModal.show('marker_info');
     },
     reloadPharm(){

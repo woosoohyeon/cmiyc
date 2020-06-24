@@ -343,40 +343,24 @@ export default {
             }
             
             mmm.sort();
-            //console.log(mmm)
-            if(mask.pharm.soldout == null){
-              mask.pharm.soldout = "매진 안 됨"
-            }
-            if(mask.pharm.tosome == null){
-              mask.pharm.tosome = "알 수 없음"
-            }
-            if(mask.pharm.tofew == null){
-             mask.pharm.tofew = "알 수 없음"
-            }
-            if(mask.pharm.ware == null){
-              mask.pharm.ware = "알 수 없음"
-            }
+
+            if(mask.pharm.soldout == null) mask.pharm.soldout = "매진 안 됨"
+            if(mask.pharm.tosome == null)  mask.pharm.tosome = "알 수 없음"
+            if(mask.pharm.tofew == null)   mask.pharm.tofew = "알 수 없음"
+            if(mask.pharm.ware == null)    mask.pharm.ware = "알 수 없음"
+            
 
             if(mmm[0] > 9999990){
-              //console.log("fucc")
+              //Nothing
             }else if(mmm[0] == Math.abs(subfew)){
-              if(subfew > 0){
-                this.few.push(mask)
-              }else{
-                this.some.push(mask)
-              }
+              if(subfew > 0) this.few.push(mask)
+              else this.some.push(mask)
             }else if(mmm[0] == Math.abs(subsome)){
-              if(subsome > 0 ){
-                this.some.push(mask)
-              }else{
-                this.plenty.push(mask)
-              }
+              if(subsome > 0 ) this.some.push(mask)
+              else this.plenty.push(mask)
             }else if(mmm[0] == Math.abs(subempty)){
-                if(subempty >= 0){
-                  this.empty.push(mask)
-                }else{
-                  this.few.push(mask)
-                }
+              if(subempty >= 0) this.empty.push(mask)
+              else this.few.push(mask)
             }else if(mmm[0] == Math.abs(subplenty)){
               this.plenty.push(mask)
             }
@@ -414,9 +398,7 @@ export default {
     },
   },
   mounted(){
-    /*Maskdata.storeInfos.forEach(element => {
-      this.mask.push(element)
-    });*/
+
   },
 
 }

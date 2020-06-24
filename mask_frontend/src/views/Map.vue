@@ -134,6 +134,9 @@ export default {
       mask:[],
       markers:[],
       fewMarkers:[],
+      plentyMarkers: [],
+      someMarkers: [],
+      emptyMarkers: [],
       top3: [],
       plenty:[],
       some:[],
@@ -281,15 +284,15 @@ export default {
     },
     onSomeMarkerLoaded(vue){
       vue.marker.setIcon("https://ifh.cc/g/KtzXJn.png");
-      this.fewMarkers.push(vue.marker);
+      this.someMarkers.push(vue.marker);
     },
     onEmptyMarkerLoaded(vue){
       vue.marker.setIcon("https://ifh.cc/g/YEWqcf.png");
-      this.fewMarkers.push(vue.marker);
+      this.emptyMarkers.push(vue.marker);
     },
     onPlentyMarkerLoaded(vue){
       vue.marker.setIcon("https://ifh.cc/g/86P9lz.png");
-      this.fewMarkers.push(vue.marker);
+      this.plentyMarkers.push(vue.marker);
     },
     onMarkerClicked(idx) {
       this.marker = this.mask[idx].pharm; // 현재 마커 할당
@@ -361,11 +364,11 @@ export default {
             }
             //console.log(time);
 
-            var subfew    = 9999999
-            var subsome   = 9999999
-            var subempty  = 9999999
+            var subfew    = 9999996
+            var subsome   = 9999997
+            var subempty  = 9999998
             var subplenty = 9999999
-            var mmm = [9999999,9999999,9999999,9999999]
+            var mmm = [subfew,subsome,subempty,subplenty]
 
 
             if(mask.pharm.tofew != null){
@@ -395,7 +398,7 @@ export default {
             
             mmm.sort();
             //console.log(mmm)
-            if(mmm[0] == 9999999){
+            if(mmm[0] > 9999990){
               //console.log("fucc")
             }else if(mmm[0] == Math.abs(subfew)){
               if(subfew > 0){

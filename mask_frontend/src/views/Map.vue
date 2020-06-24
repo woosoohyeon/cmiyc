@@ -29,6 +29,7 @@
                 <small>예상 30% 소진 시간</small><br/>
                 <small style="font-weight: bold;" >{{item.pharm.tosome}}</small>
               </b-col>
+            </b-row>
             <b-row>
                <b-col>
                 <small>예상 70% 소진 시간</small><br/>
@@ -40,7 +41,7 @@
               </b-col>
             </b-row>
              
-            </b-row>
+            
             <br/>
             <br/>
             <br/>
@@ -231,13 +232,13 @@ export default {
     },
     getDateString(day){
       switch (day) {
-              case 0: return "sunday"
-              case 1: return "monday";
-              case 2: return "tuesday";
-              case 3: return "wednesday";
-              case 4: return "tursday";
-              case 5: return "friday";
-              case 6: return "saturday";
+        case 0: return "sunday"
+        case 1: return "monday";
+        case 2: return "tuesday";
+        case 3: return "wednesday";
+        case 4: return "tursday";
+        case 5: return "friday";
+        case 6: return "saturday";
       }
     },
     onNowMarkerLoaded(vue){
@@ -277,16 +278,6 @@ export default {
       this.infoWindow.tosome = this.few[idx].pharm.tosome;
       this.infoWindow.ware = this.few[idx].pharm.ware;
       this.infoWindow.soldout = this.few[idx].pharm.soldout;
-      if(this.few[idx].pharm.soldout == null){
-        this.infoWindow.soldout = "매진 안 됨"
-      }
-      if(this.few[idx].pharm.tosome == null){
-        this.infoWindow.tosome = "알 수 없음"
-      }
-      if(this.few[idx].pharm.tofew == null){
-        this.infoWindow.tofew = "알 수 없음"
-      }
-      //this.loadPharm(this.mask[idx].pharm.id);
       this.$bvModal.show('marker_info');
     },
     onEmptyMarkerClicked(idx) {
@@ -299,16 +290,6 @@ export default {
       this.infoWindow.tosome = this.empty[idx].pharm.tosome;
       this.infoWindow.ware = this.empty[idx].pharm.ware;
       this.infoWindow.soldout = this.empty[idx].pharm.soldout;
-      if(this.empty[idx].pharm.soldout == null){
-        this.infoWindow.soldout = "매진 안 됨"
-      }
-      if(this.empty[idx].pharm.tosome == null){
-        this.infoWindow.tosome = "알 수 없음"
-      }
-      if(this.empty[idx].pharm.tofew == null){
-        this.infoWindow.tofew = "알 수 없음"
-      }
-      //this.loadPharm(this.mask[idx].pharm.id);
       this.$bvModal.show('marker_info');
     },
     onPlentyMarkerClicked(idx) {
@@ -321,19 +302,6 @@ export default {
       this.infoWindow.tosome = this.plenty[idx].pharm.tosome;
       this.infoWindow.ware = this.plenty[idx].pharm.ware;
       this.infoWindow.soldout = this.plenty[idx].pharm.soldout;
-      if(this.plenty[idx].pharm.soldout == null){
-        this.infoWindow.soldout = "매진 안 됨"
-      }
-      if(this.plenty[idx].pharm.tosome == null){
-        this.infoWindow.tosome = "알 수 없음"
-      }
-      if(this.plenty[idx].pharm.tofew == null){
-        this.infoWindow.tofew = "알 수 없음"
-      }
-      if(this.plenty[idx].pharm.ware == null){
-        this.infoWindow.ware = "알 수 없음"
-      }
-      //this.loadPharm(this.mask[idx].pharm.id);
       this.$bvModal.show('marker_info');
     },
     onSomeMarkerClicked(idx) {
@@ -346,16 +314,6 @@ export default {
       this.infoWindow.tosome = this.some[idx].pharm.tosome;
       this.infoWindow.ware = this.some[idx].pharm.ware;
       this.infoWindow.soldout = this.some[idx].pharm.soldout;
-      if(this.some[idx].pharm.soldout == null){
-        this.infoWindow.soldout = "매진 안 됨"
-      }
-      if(this.some[idx].pharm.tosome == null){
-        this.infoWindow.tosome = "알 수 없음"
-      }
-      if(this.some[idx].pharm.tofew == null){
-        this.infoWindow.tofew = "알 수 없음"
-      }
-      //this.loadPharm(this.mask[idx].pharm.id);
       this.$bvModal.show('marker_info');
     },
     reloadPharm(){
@@ -453,6 +411,20 @@ export default {
             
             mmm.sort();
             //console.log(mmm)
+
+            if(mask.pharm.soldout == null){
+              mask.pharm.soldout = "매진 안 됨"
+            }
+            if(mask.pharm.tosome == null){
+              mask.pharm.tosome = "알 수 없음"
+            }
+            if(mask.pharm.tofew == null){
+             mask.pharm.tofew = "알 수 없음"
+            }
+            if(mask.pharm.ware == null){
+              mask.pharm.ware = "알 수 없음"
+            }
+
             if(mmm[0] > 9999990){
               //console.log("fucc")
             }else if(mmm[0] == Math.abs(subfew)){

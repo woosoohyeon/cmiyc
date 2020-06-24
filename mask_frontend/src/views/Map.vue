@@ -88,7 +88,6 @@
 // 네이버 객체가 안잡혀서 최적화 하려고 넣었습니다. 20.06.07
 <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?clientId=gv7ysohqky"></script>
 <script>
-//import maskData from '../assets/maskDATA.json'
 import EventBus from '@/eventbus'
 
 export default {
@@ -105,18 +104,18 @@ export default {
       infoWindow:{
         name: null,
         address : '주소정보가 제공되지 않습니다.',
-        phone : '전화번호 정보가 제공되지 않습니다.',
-        ware : '로딩 중 입니다...',
-        soldout: '로딩 중 입니다...',
-        tosome: '로딩 중 입니다... ',
-        tofew: '로딩 중 입니다... '
+        phone   : '전화번호 정보가 제공되지 않습니다.',
+        ware    : '로딩 중 입니다...',
+        soldout : '로딩 중 입니다...',
+        tosome  : '로딩 중 입니다...',
+        tofew   : '로딩 중 입니다...',
       },
       marker: null,
       mapOptions: {
-        lat: 37.224944,
-        lng: 127.183181,
-        zoom: 14,
-        minZoom: 14,
+        lat     : 37.224944,
+        lng     : 127.183181,
+        zoom    : 14,
+        minZoom : 14,
         zoomControlOptions: {position: 'TOP_RIGHT'},
       },
         initLayers: ['BACKGROUND', 'BACKGROUND_DETAIL', 'POI_KOREAN']
@@ -226,7 +225,6 @@ export default {
     onSomeMarkerLoaded(vue){   vue.marker.setIcon("https://ifh.cc/g/KtzXJn.png"); this.someMarkers.push(vue.marker);   },
     onEmptyMarkerLoaded(vue){  vue.marker.setIcon("https://ifh.cc/g/YEWqcf.png"); this.emptyMarkers.push(vue.marker);  },
     onPlentyMarkerLoaded(vue){ vue.marker.setIcon("https://ifh.cc/g/86P9lz.png"); this.plentyMarkers.push(vue.marker); },
-    
     updateInfo(pharm){
       this.infoWindow.address = pharm.address;
       this.infoWindow.phone = pharm.phone;

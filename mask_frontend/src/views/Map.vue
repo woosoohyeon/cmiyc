@@ -222,8 +222,6 @@ export default {
       function showMarker(map, marker) {
           if (marker.getMap()) return;
           marker.setMap(map);
-          if(fewMarker.getMap()) return;
-          fewMarker.setMap(map)
       }
       function hideMarker(map, marker) {
           //마커 로직 변경으로 hide 해 줄 필요가 없어짐.
@@ -331,6 +329,9 @@ export default {
       }
       if(this.plenty[idx].pharm.tofew == null){
         this.infoWindow.tofew = "알 수 없음"
+      }
+      if(this.plenty[idx].pharm.ware == null){
+        this.infoWindow.ware = "알 수 없음"
       }
       //this.loadPharm(this.mask[idx].pharm.id);
       this.$bvModal.show('marker_info');
